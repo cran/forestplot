@@ -170,7 +170,6 @@ prFpGetConfintFnList <- function(fn, no_rows, no_cols){
 #'
 #' @param x_range The range that the values from the different confidence
 #'  interval span
-#' @param nc Number of columns
 #' @param mean The original means, either matrix or vector
 #' @return \code{list} Returns a list with axis_vp, axisGrob, labGrob, zero and clip
 #'
@@ -187,8 +186,8 @@ prFpGetGraphTicksAndClips <- function(xticks,
                                       clip,
                                       zero,
                                       x_range,
-                                      nc,
-                                      mean){
+                                      mean,
+                                      graph.pos){
 
   # Active rows are all excluding the top ones with NA in the mean value
   if (is.matrix(mean)){
@@ -234,7 +233,7 @@ prFpGetGraphTicksAndClips <- function(xticks,
       ticks <- xticks
     }
 
-    axis_vp <- viewport(layout.pos.col = 2 * nc + 1,
+    axis_vp <- viewport(layout.pos.col = graph.pos * 2 - 1,
                         layout.pos.row = from:to,
                         xscale         = x_range,
                         name           = "axis")
@@ -286,7 +285,7 @@ prFpGetGraphTicksAndClips <- function(xticks,
       ticklabels <- TRUE
     }
 
-    axis_vp <- viewport(layout.pos.col = 2 * nc + 1,
+    axis_vp <- viewport(layout.pos.col = 2 * graph.pos - 1,
                         layout.pos.row = from:to,
                         xscale         = x_range,
                         name           = "axis")
@@ -402,22 +401,27 @@ prFpPrintXaxis <- function(axisList,
 #' @param labels A list to the labels
 #' @param nc Number of columns
 #' @param nr Number of rows
+#' @inheritParams forestplot
 #' @return \code{void}
 #'
 #' @keywords internal
-prFpPrintLabels <- function(labels, nc, nr){
+prFpPrintLabels <- function(labels, nc, nr, graph.pos){
   # Output the labels
   # The column
-  for (j in 1:nc) {
+  cols <- 1:(nc + 1)
+  cols <- cols[cols !=  graph.pos]
+  cols <- cols*2-1
+  for (label_col in 1:nc) {
+    j <- cols[label_col]
     # The row
     for (i in 1:nr) {
-      if (!is.null(labels[[j]][[i]])) {
+      if (!is.null(labels[[label_col]][[i]])) {
         # The column position is 2 * j - 1 due to the column gap
         vp <- viewport(layout.pos.row = i,
-                       layout.pos.col = 2 * j - 1,
-                       name           = sprintf("Label_vp_%d_%d", i, 2*j-1))
+                       layout.pos.col = j,
+                       name           = sprintf("Label_vp_%d_%d", i, j))
         pushViewport(vp)
-        grid.draw(labels[[j]][[i]])
+        grid.draw(labels[[label_col]][[i]])
         upViewport()
       }
     }
@@ -804,7 +808,9 @@ prFpGetLabels <- function(label_type, labeltext, align,
           gp_list[["col"]] <- rep(col$text, length = nr)[i]
 
           # Create a textGrob for the summary
-          # TODO: flip the row/column order to reflect matrix order
+          # The row/column order is in this order
+          # in order to make the following possible:
+          # list(rownames(x), list(expression(1 >= a), "b", "c"))
           labels[[j]][[i]] <-
             textGrob(txt_out, x = x,
                      just = just,
@@ -1272,3 +1278,198 @@ prGetTextGrobCex <-  function(x) {
 
   return(cex)
 }
+
+
+#' Prepares the hrzl_lines for the plot
+#'
+#' @param total_columns Total number of columns
+#' @inheritParams forestplot
+#' @keywords internal
+prFpGetLines <- function(hrzl_lines,
+                         is.summary,
+                         total_columns,
+                         col){
+  ret_lines <- lapply(1:(length(is.summary) + 1), function(x) NULL)
+  if (missing(hrzl_lines) ||
+        (is.logical(hrzl_lines) &&
+           all(hrzl_lines == FALSE)) ||
+        (is.list(hrzl_lines) &&
+           all(sapply(hrzl_lines, is.null)))){
+    return(ret_lines)
+  }
+
+  std_line <- gpar(lty=1, lwd=1, col=col$hrz_lines, columns = 1:total_columns)
+  if (inherits(hrzl_lines, "gpar")){
+    std_line <- prGparMerge(std_line, hrzl_lines)
+    hrzl_lines <- TRUE
+  }
+
+  # If provided with TRUE alone
+  # Note that FALSE has already been processed above
+  if (is.logical(hrzl_lines) &&
+        length(hrzl_lines) == 1){
+      if (is.summary[1] == TRUE){
+        line_pos <- which(is.summary == FALSE)[1]
+        ret_lines[[line_pos]] <-
+          std_line
+
+        is.summary[1:line_pos] <- FALSE
+      }
+
+      if (tail(is.summary, 1)){
+        line_pos <- length(is.summary) + 1-
+          (which(rev(is.summary) == FALSE)[1] - 1)
+
+        ret_lines[[line_pos]] <-
+          std_line
+
+        ret_lines[[length(ret_lines)]] <-
+          std_line
+
+        is.summary[line_pos:length(is.summary)] <- FALSE
+      }
+
+      for (line_pos in which(is.summary == TRUE)){
+        if (is.summary[line_pos + 1]){
+          line_pos <-
+            line_pos +
+            tail(which(is.summary[(line_pos + 1):length(is.summary)]), 1)
+        }
+        ret_lines[[line_pos + 1]] <-
+          std_line
+      }
+
+      return(ret_lines)
+  }
+
+  if (is.logical(hrzl_lines)){
+    if (length(hrzl_lines) == (length(is.summary) + 1)){
+      ret_lines[[hrzl_lines]] <-
+        std_line
+      return(ret_lines)
+    }else{
+      stop("You have provided a logical hrzl_lines input of length '", length(hrzl_lines), "'",
+           " but the software expects the length to be number of rows + 1",
+           " i.e. ", length(is.summary), " + 1 = ", length(is.summary) + 1)
+    }
+  }
+
+  if (!is.list(hrzl_lines)){
+    stop("You have provided an invalid argument, expected a list but got a ", class(hrzl_lines))
+  }
+
+  if (is.null(names(hrzl_lines))){
+    if (length(hrzl_lines) == (length(is.summary) + 1)){
+      return(lapply(hrzl_lines, function(x, std) {
+        if (is.null(x)) {
+          x
+        }else if (inherits(x, "gpar")){
+          prGparMerge(std, x)
+        }else{
+          std
+        }
+      }
+      , std = std_line))
+    }else{
+      stop("You have provided a logical hrzl_lines input of length '", length(hrzl_lines), "'",
+           " but the software expects the length to be number of rows + 1",
+           " i.e. ", length(is.summary), " + 1 = ", length(is.summary) + 1)
+    }
+  }
+
+  if (!all(sapply(hrzl_lines, function(x) inherits(x, "gpar") || x == TRUE)))
+    stop("The list must consist of only gpar or logical TRUE elements")
+
+  for (n in names(hrzl_lines)){
+    nn <- as.integer(n)
+    if (is.na(nn))
+      stop("Your name '", n ,"' for the list gpars cannot be converted to an integer")
+    if (!nn %in% 1:(length(is.summary) + 1))
+      stop("The integer that you have provided '", n, "'",
+           " falls outside the scope of possible values 1:", length(is.summary) + 1)
+    if (is.logical(hrzl_lines[[n]])){
+      ret_lines[[nn]] <-
+        std_line
+    }else{
+      ret_lines[[nn]] <-
+        prGparMerge(std_line, hrzl_lines[[n]])
+    }
+  }
+
+  return(ret_lines)
+}
+
+#' Draws the horizontal lines
+#'
+#' @param nr Number of rows
+#' @param colwidths Vector with column widths
+#' @inheritParams prFpGetLines
+#' @inheritParams forestplot
+#' @keywords internal
+prFpDrawLines <- function(hrzl_lines, nr, colwidths,
+                          graph.pos){
+  getCSpan <- function (columns, colwidths) {
+    span_cols <- c()
+    col_pos <- NULL
+    for (i in 1:length(columns)){
+      pos <- columns[i]
+      pos <- pos*2 - 1
+      span_cols <- c(span_cols, pos)
+
+      if (pos < length(colwidths) &&
+            i != length(columns) &&
+            columns[i] + 1 == columns[i + 1])
+        span_cols <- c(span_cols, pos + 1)
+    }
+
+    span_cols
+  }
+
+  for (i in 1:nr) {
+    if (!is.null(hrzl_lines[[i]])){
+      span_cols <- getCSpan(hrzl_lines[[i]]$columns, colwidths)
+
+      for(c in span_cols){
+        line_vp <- viewport(layout.pos.row = i,
+                            layout.pos.col = c)
+        pushViewport(line_vp)
+        grid.lines(y = unit(c(1,1), "npc"), gp = hrzl_lines[[i]])
+        popViewport()
+      }
+    }
+
+    if (i == nr &&
+          !is.null(hrzl_lines[[i + 1]])){
+      span_cols <- getCSpan(hrzl_lines[[i + 1]]$columns, colwidths)
+
+      line_vp <- viewport(layout.pos.row = i,
+                          layout.pos.col = span_cols)
+      pushViewport(line_vp)
+      grid.lines(y = unit(c(0,0), "npc"), gp = hrzl_lines[[i + 1]])
+      popViewport()
+    }
+  }
+}
+
+#' Merges two \code{\link[grid]{gpar}} elements
+#'
+#' The second elements overrides any conflicting elements within the first
+#'
+#' @param l1 A \code{\link[grid]{gpar}} element
+#' @param l2 A \code{\link[grid]{gpar}} element
+#' @return Returns a \code{\link[grid]{gpar}} element
+#' @keywords internal
+prGparMerge <- function(l1, l2){
+  out <- c(l1, l2)
+  if (!any(duplicated(names(out))))
+    return(out)
+
+  dups <- unique(names(out)[duplicated(names(out))])
+  for (n in dups){
+    wd <- which(names(out) == n)
+    out <- out[-wd[1:(length(wd) - 1)]]
+  }
+  class(out) <- unique(c(class(out), class(l1)))
+  return(out)
+}
+
