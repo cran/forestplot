@@ -1,6 +1,6 @@
 Package: forestplot
-Version: 1.7
-Date: 2017-01-07
+Version: 1.7.2
+Date: 2017-09-16
 Title: Advanced Forest Plot Using 'grid' Graphics
 Authors@R: c(person(given = "Max",
                     family = "Gordon",
@@ -26,10 +26,10 @@ Suggests: testthat, abind, knitr, rmarkdown
 Encoding: UTF-8
 NeedsCompilation: no
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
-Packaged: 2017-01-07 15:45:46 UTC; max
+RoxygenNote: 6.0.1
+Packaged: 2017-09-16 15:15:25 UTC; grdn
 Author: Max Gordon [aut, cre],
   Thomas Lumley [aut, ctb]
 Maintainer: Max Gordon <max@gforge.se>
 Repository: CRAN
-Date/Publication: 2017-01-07 17:45:04
+Date/Publication: 2017-09-16 18:51:41 UTC
