@@ -3,21 +3,21 @@
 \name{forestplot}
 \alias{forestplot}
 \alias{forestplot.default}
-\alias{forestplot.default}
 \title{Draws a forest plot}
 \usage{
 forestplot(...)
 
 \method{forestplot}{default}(labeltext, mean, lower, upper, align,
   is.summary = FALSE, graph.pos = "right", hrzl_lines, clip = c(-Inf,
-  Inf), xlab = "", zero = ifelse(xlog, 1, 0), graphwidth = "auto", colgap,
-  lineheight = "auto", line.margin, col = fpColors(), txt_gp = fpTxtGp(),
-  xlog = FALSE, xticks, xticks.digits = 2, grid = FALSE, lwd.xaxis,
-  lwd.zero, lwd.ci, lty.ci = 1, ci.vertices, ci.vertices.height = 0.1,
-  boxsize, mar = unit(rep(5, times = 4), "mm"), title, legend,
-  legend_args = fpLegend(), new_page = getOption("forestplot_new_page",
-  TRUE), fn.ci_norm = fpDrawNormalCI, fn.ci_sum = fpDrawSummaryCI,
-  fn.legend, ...)
+  Inf), xlab = "", zero = ifelse(xlog, 1, 0), graphwidth = "auto",
+  colgap, lineheight = "auto", line.margin, col = fpColors(),
+  txt_gp = fpTxtGp(), xlog = FALSE, xticks, xticks.digits = 2,
+  grid = FALSE, lwd.xaxis, lwd.zero, lwd.ci, lty.ci = 1, ci.vertices,
+  ci.vertices.height = 0.1, boxsize, mar = unit(rep(5, times = 4),
+  "mm"), title, legend, legend_args = fpLegend(),
+  new_page = getOption("forestplot_new_page", TRUE),
+  fn.ci_norm = fpDrawNormalCI, fn.ci_sum = fpDrawSummaryCI, fn.legend,
+  ...)
 }
 \arguments{
 \item{...}{Passed on to the \code{fn.ci_norm} and
@@ -63,7 +63,7 @@ of \code{\link[grid]{gpar}}. See line section below for details.}
 \item{xlab}{x-axis label}
 
 \item{zero}{x-axis coordinate for zero line. If you provide a vector of length 2 it
-will print a rectangle instead of just a line.}
+will print a rectangle instead of just a line. If you provide NA the line is supressed.}
 
 \item{graphwidth}{Width of confidence interval graph, see \code{\link[grid]{unit}} for
 details on how to utilize mm etc. The default is \code{auto}, that is it uses up whatever
@@ -341,3 +341,4 @@ Other forestplot functions: \code{\link{fpColors}},
 \author{
 Max Gordon, Thomas Lumley
 }
+\concept{forestplot functions}

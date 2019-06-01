@@ -4,8 +4,8 @@
 \alias{prFpGetGraphTicksAndClips}
 \title{A helper function to forestplot}
 \usage{
-prFpGetGraphTicksAndClips(xticks, xticks.digits, grid, xlog, xlab, lwd.xaxis,
-  col, txt_gp, clip, zero, x_range, mean, graph.pos)
+prFpGetGraphTicksAndClips(xticks, xticks.digits, grid, xlog, xlab,
+  lwd.xaxis, col, txt_gp, clip, zero, x_range, mean, graph.pos)
 }
 \arguments{
 \item{xticks}{Optional user-specified x-axis tick marks. Specify NULL to use
@@ -45,7 +45,7 @@ for details}
 \item{clip}{Lower and upper limits for clipping confidence intervals to arrows}
 
 \item{zero}{x-axis coordinate for zero line. If you provide a vector of length 2 it
-will print a rectangle instead of just a line.}
+will print a rectangle instead of just a line. If you provide NA the line is supressed.}
 
 \item{x_range}{The range that the values from the different confidence
 interval span}
