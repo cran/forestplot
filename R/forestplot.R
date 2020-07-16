@@ -1,7 +1,7 @@
 #' Draws a forest plot
 #'
 #' The \emph{forestplot} is based on the \pkg{rmeta}-package`s
-#' \code{\link[rmeta]{forestplot}} function. This
+#' \code{forestplot} function. This
 #' function resolves some limitations of the original
 #' functions such as:
 #' \itemize{
@@ -44,7 +44,7 @@
 #' The x-axis does not entirely respect the margin. Autosizing boxes is not
 #' always the best option, try to set these manually as much as possible.
 #'
-#' @section API-changes from \pkg{rmeta}-package`s \code{\link[rmeta]{forestplot}}:
+#' @section API-changes from \pkg{rmeta}-package`s \code{forestplot}:
 #' \itemize{
 #'   \item{xlog: }{The xlog outputs the axis in log() format but the input data should be in antilog/exp format}
 #'   \item{col: }{The corresponding function is \code{\link{fpColors}} for this package}
@@ -103,8 +103,8 @@
 #' @param txt_gp Set the fonts etc for all text elements. See \code{\link{fpTxtGp}}
 #'   for details
 #' @param xlog If TRUE, x-axis tick marks are to follow a logarithmic scale, e.g. for
-#'   logistic regressoin (OR), survival estimates (HR), poisson regression etc.
-#'   \emph{Note:} This is an intentional break with the original \code{\link[rmeta]{forestplot}}
+#'   logistic regressoin (OR), survival estimates (HR), Poisson regression etc.
+#'   \emph{Note:} This is an intentional break with the original \code{forestplot}
 #'   function as I've found that exponentiated ticks/clips/zero effect are more
 #'   difficult to for non-statisticians and there are sometimes issues with rounding
 #'   the tick marks properly.
@@ -152,6 +152,9 @@
 #'  legends, this can be a list if you want different functions. It defaults to
 #'  a box if you have anything else than a single function or the number of columns
 #'  in the \code{mean} argument
+#' @param shapes_gp Sets graphical parameters (squares and lines widths, styles, etc.)
+#'  of all shapes drawn (squares, lines, diamonds, etc.). This overrides \code{col},
+#'  \code{lwd.xaxis}, \code{lwd.zero}, \code{lwd.ci} and \code{lty.ci}.
 #' @param ... Passed on to the \code{fn.ci_norm} and
 #'  \code{fn.ci_sum} arguments
 #'
@@ -210,6 +213,7 @@ forestplot.default <- function (labeltext,
                                 fn.ci_norm         = fpDrawNormalCI,
                                 fn.ci_sum          = fpDrawSummaryCI,
                                 fn.legend,
+                                shapes_gp		   = fpShapesGp(),
                                 ...)
 {
   if (missing(colgap)){
@@ -439,12 +443,12 @@ forestplot.default <- function (labeltext,
                   " The only values accepted are 'left'/'right' or 'first'/'last'.",
                   " You have provided the value '", graph.pos, "'"))
   }else if(is.numeric(graph.pos)){
-    if (!graph.pos %in% 1:(NCOL(labeltext) + 1))
-      stop("The graph position must be between 1 and ", (NCOL(labeltext) + 1), ".",
+    if (!graph.pos %in% 1:(nc + 1))
+      stop("The graph position must be between 1 and ", (nc + 1), ".",
            " You have provided the value '", graph.pos, "'.")
   }else{
     stop("The graph pos must either be a string consisting of 'left'/'right' (alt. 'first'/'last')",
-         ", or an integer value between 1 and ", (NCOL(labeltext) + 1))
+         ", or an integer value between 1 and ", (nc + 1))
   }
 
   # Prepare the summary and align variables
@@ -491,7 +495,8 @@ forestplot.default <- function (labeltext,
   hrzl_lines <- prFpGetLines(hrzl_lines = hrzl_lines,
                              is.summary = is.summary,
                              total_columns = nc + 1,
-                             col = col)
+                             col = col,
+                             shapes_gp = shapes_gp)
 
   labels <- prFpGetLabels(label_type = label_type,
                           labeltext = labeltext,
@@ -533,7 +538,8 @@ forestplot.default <- function (labeltext,
                                                            xticks = xticks,
                                                            xlog = xlog),
                                         mean = org_mean,
-                                        graph.pos = graph.pos)
+                                        graph.pos = graph.pos,
+                                        shapes_gp = shapes_gp)
   clip <- axisList$clip
 
   ##################
@@ -747,7 +753,9 @@ forestplot.default <- function (labeltext,
 
 
   prFpPrintXaxis(axisList=axisList,
-                 col=col, lwd.zero=lwd.zero)
+                 col=col,
+                 lwd.zero=lwd.zero,
+                 shapes_gp = shapes_gp)
 
   # Output the different confidence intervals
   for (i in 1:nr) {
@@ -796,6 +804,9 @@ forestplot.default <- function (labeltext,
         if (is.na(mean_values[j]))
           next;
 
+        shape_coordinates <- c(i,j)
+        attr(shape_coordinates, "max.coords") <- c(nr, length(low_values))
+
         if (is.summary[i]){
           call_list <-
             list(fn.ci_sum[[i]][[j]],
@@ -804,7 +815,10 @@ forestplot.default <- function (labeltext,
                  upper_limit=up_values[j],
                  size=info_values[j],
                  y.offset = current_y.offset,
-                 col = clr.summary[j])
+                 col = clr.summary[j],
+                 shapes_gp=shapes_gp,
+                 shape_coordinates=shape_coordinates
+                 )
         }else{
           call_list <-
             list(fn.ci_norm[[i]][[j]],
@@ -816,7 +830,10 @@ forestplot.default <- function (labeltext,
                  clr.line = clr.line[j],
                  clr.marker = clr.marker[j],
                  lty = lty.ci[[i]][[j]],
-                 vertices.height = ci.vertices.height)
+                 vertices.height = ci.vertices.height,
+                 shapes_gp=shapes_gp,
+                 shape_coordinates=shape_coordinates
+                 )
 
           if (!missing(ci.vertices))
             call_list$vertices = ci.vertices;
@@ -836,17 +853,27 @@ forestplot.default <- function (labeltext,
         }
 
         # Do the actual drawing of the object
-        eval(as.call(call_list))
+        tryCatch(eval(as.call(call_list)),
+                 error = function(e) {
+                   stop("On row ", i, " the print of the estimate failed: ", e$message)
+                 })
       }
     }else{
+      shape_coordinates <- c(i,1)
+      attr(shape_coordinates, "max.coords") <- c(nr, 1)
+
       if (is.summary[i]){
+
         call_list <-
           list(fn.ci_sum[[i]],
                lower_limit=low_values,
                estimate=mean_values,
                upper_limit=up_values,
                size=info_values,
-               col=clr.summary)
+               col=clr.summary,
+               shapes_gp=shapes_gp,
+               shape_coordinates=shape_coordinates
+               )
       }else{
         call_list <-
           list(fn.ci_norm[[i]],
@@ -857,7 +884,10 @@ forestplot.default <- function (labeltext,
                clr.line = clr.line,
                clr.marker = clr.marker,
                lty = lty.ci[[i]],
-               vertices.height = ci.vertices.height)
+               vertices.height = ci.vertices.height,
+               shapes_gp=shapes_gp,
+               shape_coordinates=shape_coordinates
+               )
 
         if (!missing(ci.vertices))
           call_list$vertices = ci.vertices;
@@ -876,8 +906,13 @@ forestplot.default <- function (labeltext,
       }
 
       # Do the actual drawing of the object
-      if (!is.na(mean_values))
-        eval(as.call(call_list))
+      if (!is.na(mean_values)){
+        tryCatch(eval(as.call(call_list)),
+                 error = function(e) {
+                   stop("On row ", i, " the print of the estimate failed: ", e$message)
+                 })
+
+      }
     }
 
     upViewport()

@@ -4,8 +4,22 @@
 \alias{prFpGetGraphTicksAndClips}
 \title{A helper function to forestplot}
 \usage{
-prFpGetGraphTicksAndClips(xticks, xticks.digits, grid, xlog, xlab,
-  lwd.xaxis, col, txt_gp, clip, zero, x_range, mean, graph.pos)
+prFpGetGraphTicksAndClips(
+  xticks,
+  xticks.digits,
+  grid,
+  xlog,
+  xlab,
+  lwd.xaxis,
+  col,
+  txt_gp,
+  clip,
+  zero,
+  x_range,
+  mean,
+  graph.pos,
+  shapes_gp = fpShapesGp()
+)
 }
 \arguments{
 \item{xticks}{Optional user-specified x-axis tick marks. Specify NULL to use
@@ -26,8 +40,8 @@ directly pass a \code{\link[grid]{gpar}} object or set the gp attribute e.g.
 \code{attr(line_vector, "gp") <- \link[grid]{gpar}(lty=2, col = "red")}}
 
 \item{xlog}{If TRUE, x-axis tick marks are to follow a logarithmic scale, e.g. for
-logistic regressoin (OR), survival estimates (HR), poisson regression etc.
-\emph{Note:} This is an intentional break with the original \code{\link[rmeta]{forestplot}}
+logistic regressoin (OR), survival estimates (HR), Poisson regression etc.
+\emph{Note:} This is an intentional break with the original \code{forestplot}
 function as I've found that exponentiated ticks/clips/zero effect are more
 difficult to for non-statisticians and there are sometimes issues with rounding
 the tick marks properly.}
@@ -55,6 +69,10 @@ interval span}
 \item{graph.pos}{The position of the graph element within the table of text. The
 position can be \code{1-(ncol(labeltext) + 1)}. You can also choose set the positin
 to \code{"left"} or \code{"right"}.}
+
+\item{shapes_gp}{Sets graphical parameters (squares and lines widths, styles, etc.)
+of all shapes drawn (squares, lines, diamonds, etc.). This overrides \code{col},
+\code{lwd.xaxis}, \code{lwd.zero}, \code{lwd.ci} and \code{lty.ci}.}
 }
 \value{
 \code{list} Returns a list with axis_vp, axisGrob, labGrob, zero and clip

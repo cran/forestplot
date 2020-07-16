@@ -1,8 +1,8 @@
-## ---- echo=FALSE---------------------------------------------------------
+## ---- echo=FALSE--------------------------------------------------------------
 knitr::opts_chunk$set(fig.width = 7, 
                       fig.height=3, dev='png', dev.args=list(type="cairo"))
 
-## ---- fig.height=4, fig.width=8, message=FALSE---------------------------
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
 library(forestplot)
 # Cochrane data from the 'rmeta'-package
 cochrane_from_rmeta <- 
@@ -35,7 +35,7 @@ forestplot(tabletext,
            xlog=TRUE, 
            col=fpColors(box="royalblue",line="darkblue", summary="royalblue"))
 
-## ---- fig.height=4, fig.width=8, message=FALSE---------------------------
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
 forestplot(tabletext, 
            hrzl_lines = gpar(col="#444444"),
            cochrane_from_rmeta,new_page = TRUE,
@@ -44,7 +44,7 @@ forestplot(tabletext,
            xlog=TRUE,
            col=fpColors(box="royalblue",line="darkblue", summary="royalblue"))
 
-## ---- fig.height=4, fig.width=8, message=FALSE---------------------------
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
 forestplot(tabletext, 
            hrzl_lines = list("3" = gpar(lty=2), 
                              "11" = gpar(lwd=1, columns=1:4, col = "#000044")),
@@ -54,7 +54,7 @@ forestplot(tabletext,
            xlog=TRUE,
            col=fpColors(box="royalblue",line="darkblue", summary="royalblue", hrz_lines = "#444444"))
 
-## ---- fig.height=4, fig.width=8, message=FALSE---------------------------
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
 forestplot(tabletext, 
            hrzl_lines = list("3" = gpar(lty=2), 
                              "11" = gpar(lwd=1, columns=1:4, col = "#000044")),
@@ -65,7 +65,7 @@ forestplot(tabletext,
            col=fpColors(box="royalblue",line="darkblue", summary="royalblue", hrz_lines = "#444444"),
            vertices = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            graph.pos = 4,
            hrzl_lines = list("3" = gpar(lty=2), 
@@ -77,7 +77,7 @@ forestplot(tabletext,
            xlog=TRUE,
            col=fpColors(box="royalblue",line="darkblue", summary="royalblue", hrz_lines = "#444444"))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data(HRQoL)
 clrs <- fpColors(box="royalblue",line="darkblue", summary="royalblue")
 tabletext <- 
@@ -89,7 +89,7 @@ forestplot(tabletext,
            col=clrs,
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 tabletext <- cbind(rownames(HRQoL$Sweden),
                    sprintf("%.2f", HRQoL$Sweden[,"coef"]))
 forestplot(tabletext, 
@@ -98,7 +98,7 @@ forestplot(tabletext,
            col=clrs,
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            txt_gp = fpTxtGp(label = list(gpar(fontfamily = "HersheyScript"),
                                          gpar(fontfamily = "",
@@ -109,14 +109,62 @@ forestplot(tabletext,
            col=clrs,
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            rbind(HRQoL$Sweden),
            clip =c(-.1, Inf),
            col=clrs,
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
+forestplot(tabletext, 
+           boxsize = 0.2,
+           rbind(HRQoL$Sweden),
+           clip =c(-.1, Inf),
+           col=clrs,
+           xlab="EQ-5D index")
+
+## ----fig.width=10, fig.height=4-----------------------------------------------
+library(grid)
+grid.newpage()
+borderWidth <- unit(4, "pt")
+width <- unit(convertX(unit(1, "npc") - borderWidth, unitTo = "npc", valueOnly = TRUE)/2, "npc")
+pushViewport(viewport(layout = grid.layout(nrow=1, 
+                                           ncol=3, 
+                                           widths = unit.c(width,
+                                                           borderWidth,
+                                                           width))
+                      )
+             )
+pushViewport(viewport(layout.pos.row = 1,
+                      layout.pos.col = 1))
+forestplot(tabletext, 
+           title = "Original (1x)",
+           rbind(HRQoL$Sweden),
+           clip =c(-.1, Inf),
+           col=clrs,
+           xlab="EQ-5D index",
+           new_page = FALSE)
+upViewport()
+pushViewport(viewport(layout.pos.row = 1,
+                      layout.pos.col = 2))
+grid.rect(gp = gpar(fill="#dddddd", col="#eeeeee"))
+upViewport()
+pushViewport(viewport(layout.pos.row = 1,
+                      layout.pos.col = 3))
+forestplot(tabletext, 
+           title = "0.5x",
+           fn.ci_norm = function(size, ...) {
+             fpDrawNormalCI(size = size * 0.5, ...)
+           },
+           rbind(HRQoL$Sweden),
+           clip =c(-.1, Inf),
+           col=clrs,
+           xlab="EQ-5D index",
+           new_page = FALSE)
+upViewport(2)
+
+## -----------------------------------------------------------------------------
 tabletext <- tabletext[,1]
 forestplot(tabletext, 
            mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
@@ -127,7 +175,7 @@ forestplot(tabletext,
            xlab="EQ-5D index")
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
             fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
             boxsize = .25, # We set the box size to better visualize the type
@@ -139,7 +187,7 @@ forestplot(tabletext,
             col=fpColors(box=c("blue", "darkred")),
             xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
             fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
             boxsize = .25, # We set the box size to better visualize the type
@@ -152,7 +200,7 @@ forestplot(tabletext,
             col=fpColors(box=c("blue", "darkred")),
             xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            legend = c("Sweden", "Denmark"),
            fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
@@ -165,7 +213,7 @@ forestplot(tabletext,
            col=fpColors(box=c("blue", "darkred")),
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            legend_args = fpLegend(pos = list(x=.85, y=0.25), 
                                   gp=gpar(col="#CCCCCC", fill="#F9F9F9")),
@@ -180,7 +228,7 @@ forestplot(tabletext,
            col=fpColors(box=c("blue", "darkred")),
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            legend = c("Sweden", "Denmark"),
            fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
@@ -194,7 +242,7 @@ forestplot(tabletext,
            xticks = c(-.1, -0.05, 0, .05),
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 xticks <- seq(from = -.1, to = .05, by = 0.025)
 xtlab <- rep(c(TRUE, FALSE), length.out = length(xticks))
 attr(xticks, "labels") <- xtlab
@@ -211,7 +259,7 @@ forestplot(tabletext,
            xticks = xticks,
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            legend = c("Sweden", "Denmark"),
            fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
@@ -226,7 +274,7 @@ forestplot(tabletext,
            xticks = c(-.1, -0.05, 0, .05),
            xlab="EQ-5D index")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 forestplot(tabletext, 
            legend = c("Sweden", "Denmark"),
            fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
@@ -241,7 +289,7 @@ forestplot(tabletext,
                             gp = gpar(lty = 2, col = "#CCCCFF")), 
            xlab="EQ-5D index")
 
-## ---- eval=FALSE, echo=TRUE----------------------------------------------
+## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  grid_arg <- c(-.1, -.05, .05)
 #  attr(grid_arg, "gp") <- gpar(lty = 2, col = "#CCCCFF")
 #  
