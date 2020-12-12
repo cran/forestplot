@@ -1,6 +1,6 @@
-743e15b73661a13ef10ff059391d8d2a *DESCRIPTION
+45df75bd88caa93138a508057004a7d4 *DESCRIPTION
 451ea54ad6bf719011ac32ab31d21f4b *NAMESPACE
-be6fb1854d9e4b4d43d6ff8f0cfd9c08 *NEWS.md
+599c11da75efa779a7c1a3ec55bb0bf0 *NEWS.md
 363553f9f7d303b7b2753b55704ddd85 *R/data-HRQoL.R
 7ccfc03393fe8cea79f9f1aa8ec749c1 *R/forestplot-package.R
 45042f829dd180dbe7bbb35ab95da5fa *R/forestplot.R
@@ -8,12 +8,12 @@ be6fb1854d9e4b4d43d6ff8f0cfd9c08 *NEWS.md
 32e571df1072f196c2dd7b24600333c9 *R/getTicks.R
 95bd84eba58de5a6be524df3e166d33b *R/grid_helpers.R
 9506dda7643a7885db180e6360f98c9f *R/private.R
-d0c33f3fcacb18265535953218cca5ef *README.md
-4cad164bd3687dae110d53e13b70e7bf *build/vignette.rds
+41e6af4b030c0571fad4234fb981567f *README.md
+e93bfc6f71a6a408d0eff3d5735a6027 *build/vignette.rds
 d605e7b47680b7bf3a127a2fd1c477c6 *data/HRQoL.rda
-391d7edf6039780edb1db47ab2fac03c *inst/doc/forestplot.R
-999b01a891f41db792cd1e6a71df9f00 *inst/doc/forestplot.Rmd
-170a5272a3cfa30d6cd9586318145103 *inst/doc/forestplot.html
+6641e334e0a3c640f0e9ea20b6ac2b2e *inst/doc/forestplot.R
+e53e48416868659f696480e4486f94ed *inst/doc/forestplot.Rmd
+763fd21c1b67a13bcc8e31c499eb061d *inst/doc/forestplot.html
 e7ae94e4245579a11ac6e2a7e1ce6a71 *inst/examples/forestplot_alt_ci_example.R
 65d85a5475e94ee5f9dcdedefe5cfe7d *inst/examples/forestplot_example.R
 8ecd5171fdb6f60f934d101518e2e850 *inst/examples/fpColors_example.R
@@ -69,4 +69,4 @@ d088c3451f9b8a36c283de3404b8625a *tests/testthat/test-prFpConvertMultidimArray.R
 fd2a084358901c33e452f100cab0d0b0 *tests/testthat/test-prFpGetLines.R
 d52fc361b7ddbd190aecdd4cac39f87a *tests/testthat/test-prGparMerge.R
 f234ae0fc3f6e34b2e6ab71edbe53c31 *tests/vtest_from_vignette.R
-999b01a891f41db792cd1e6a71df9f00 *vignettes/forestplot.Rmd
+e53e48416868659f696480e4486f94ed *vignettes/forestplot.Rmd
