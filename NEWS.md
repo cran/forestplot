@@ -1,5 +1,11 @@
 NEWS for the forestplot package
 
+Changes for 2.0
+----------------
+* Changed function so that it returns a `gforge_forestplot` object instead of directly plotting. The `print.gforge_forestplot` calls the draw function that converts the object to the actual forestplot. **Breaking** if you have used the function within loops this will cause a break in the old behavior.
+* Implemented `dplyr` compatible API that allows using standard dplyr syntax
+* Fixed shapes_gp legend bug
+
 Changes for 1.10
 -----------------
 * Minor improvement for error message when plotting lines
@@ -13,15 +19,15 @@ Changes for 1.9
 Changes for 1.8
 -----------------
 * Fixed issue #10 with non-log grid lines
-* Supressing the "zero" line #8
+* Suppressing the "zero" line #8
 * Fixed bug when automatic lower/upper are to be identified and the data contains NA
 * Fixed bug reported related to legends on SO: https://stackoverflow.com/questions/43217570/forestplot-want-to-give-legend-for-each-4-colums
 
 Changes for 1.7
 -----------------
-* Fixed bug when mergin `gpar()` with font & fontface options (thanks Katherine T. Mills)
+* Fixed bug when merging `gpar()` with font & fontface options (thanks Katherine T. Mills)
 * Fixed input bug with 3-dim array
-* Improved autodetection of upper and lower intervals
+* Improved auto detection of upper and lower intervals
 
 Changes for 1.6
 -----------------
@@ -55,7 +61,7 @@ Changes for 1.3
 Changes for 1.2
 ---------------
 * Line-type can be specified
-* Line endings can now be marked by a T vertice, this default for all line types other than 1
+* Line endings can now be marked by a T vertical, this default for all line types other than 1
 * The arrow height defaults to the same height as the vertices
 * Added a grid option
 * Improved documentation

@@ -37,7 +37,7 @@ ticks you can set this parameter to \code{TRUE}. If you set the parameter
 to a vector of values lines will be drawn at the corresponding positions.
 If you want to specify the \code{\link[grid]{gpar}} of the lines then either
 directly pass a \code{\link[grid]{gpar}} object or set the gp attribute e.g.
-\code{attr(line_vector, "gp") <- \link[grid]{gpar}(lty=2, col = "red")}}
+\code{attr(line_vector, "gp") <- \link[grid]{gpar}(lty = 2, col = "red")}}
 
 \item{xlog}{If TRUE, x-axis tick marks are to follow a logarithmic scale, e.g. for
 logistic regressoin (OR), survival estimates (HR), Poisson regression etc.
@@ -59,7 +59,7 @@ for details}
 \item{clip}{Lower and upper limits for clipping confidence intervals to arrows}
 
 \item{zero}{x-axis coordinate for zero line. If you provide a vector of length 2 it
-will print a rectangle instead of just a line. If you provide NA the line is supressed.}
+will print a rectangle instead of just a line. If you provide NA the line is suppressed.}
 
 \item{x_range}{The range that the values from the different confidence
 interval span}
@@ -67,7 +67,7 @@ interval span}
 \item{mean}{The original means, either matrix or vector}
 
 \item{graph.pos}{The position of the graph element within the table of text. The
-position can be \code{1-(ncol(labeltext) + 1)}. You can also choose set the positin
+position can be \code{1-(ncol(labeltext) + 1)}. You can also choose set the position
 to \code{"left"} or \code{"right"}.}
 
 \item{shapes_gp}{Sets graphical parameters (squares and lines widths, styles, etc.)

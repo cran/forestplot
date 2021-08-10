@@ -4,135 +4,172 @@ knitr::opts_chunk$set(fig.width = 7,
 
 ## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
 library(forestplot)
+library(dplyr)
 # Cochrane data from the 'rmeta'-package
-cochrane_from_rmeta <- 
-  structure(list(
-    mean  = c(NA, NA, 0.578, 0.165, 0.246, 0.700, 0.348, 0.139, 1.017, NA, 0.531), 
-    lower = c(NA, NA, 0.372, 0.018, 0.072, 0.333, 0.083, 0.016, 0.365, NA, 0.386),
-    upper = c(NA, NA, 0.898, 1.517, 0.833, 1.474, 1.455, 1.209, 2.831, NA, 0.731)),
-    .Names = c("mean", "lower", "upper"), 
-    row.names = c(NA, -11L), 
-    class = "data.frame")
+cochrane_from_rmeta <- structure(list(mean  = c(NA, NA, 0.578, 0.165, 0.246, 0.700, 0.348, 0.139, 1.017, NA, 0.531), 
+                                      lower = c(NA, NA, 0.372, 0.018, 0.072, 0.333, 0.083, 0.016, 0.365, NA, 0.386),
+                                      upper = c(NA, NA, 0.898, 1.517, 0.833, 1.474, 1.455, 1.209, 2.831, NA, 0.731)),
+                                 .Names = c("mean", "lower", "upper"), 
+                                 row.names = c(NA, -11L), 
+                                 class = "data.frame")
 
-tabletext <- cbind(
-  c("", "Study", "Auckland", "Block", 
-    "Doran", "Gamsu", "Morrison", "Papageorgiou", 
-    "Tauesch", NA, "Summary"),
-  c("Deaths", "(steroid)", "36", "1", 
-    "4", "14", "3", "1", 
-    "8", NA, NA),
-  c("Deaths", "(placebo)", "60", "5", 
-    "11", "20", "7", "7", 
-    "10", NA, NA),
-  c("", "OR", "0.58", "0.16", 
-    "0.25", "0.70", "0.35", "0.14", 
-    "1.02", NA, "0.53"))
+tabletext <- cbind(c("", "Study", "Auckland", "Block", "Doran", "Gamsu", "Morrison", "Papageorgiou", "Tauesch", NA, "Summary"),
+                   c("Deaths", "(steroid)", "36", "1", "4", "14", "3", "1", "8", NA, NA),
+                   c("Deaths", "(placebo)", "60", "5", "11", "20", "7", "7", "10", NA, NA),
+                   c("", "OR", "0.58", "0.16", "0.25", "0.70", "0.35", "0.14", "1.02", NA, "0.53"))
 
-forestplot(tabletext, 
-           cochrane_from_rmeta,new_page = TRUE,
-           is.summary = c(TRUE,TRUE,rep(FALSE,8),TRUE),
-           clip = c(0.1,2.5), 
-           xlog = TRUE, 
-           col = fpColors(box = "royalblue",
-                          line = "darkblue",
-                          summary = "royalblue"))
-
-## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
-forestplot(tabletext, 
-           hrzl_lines = gpar(col = "#444444"),
-           cochrane_from_rmeta,new_page = TRUE,
-           is.summary = c(TRUE,TRUE,rep(FALSE,8),TRUE),
-           clip = c(0.1,2.5), 
-           xlog = TRUE,
-           col = fpColors(box = "royalblue",
-                          line = "darkblue", 
-                          summary = "royalblue"))
-
-## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
-forestplot(tabletext, 
-           hrzl_lines = list("3" = gpar(lty = 2), 
-                             "11" = gpar(lwd = 1, columns = 1:4, col = "#000044")),
-           cochrane_from_rmeta,new_page = TRUE,
-           is.summary = c(TRUE,TRUE,rep(FALSE,8),TRUE),
-           clip = c(0.1,2.5), 
-           xlog = TRUE,
-           col = fpColors(box = "royalblue",
-                          line = "darkblue", 
-                          summary = "royalblue",
-                          hrz_lines = "#444444"))
-
-## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
-forestplot(tabletext, 
-           hrzl_lines = list("3" = gpar(lty = 2), 
-                             "11" = gpar(lwd = 1, columns = 1:4, col = "#000044")),
-           cochrane_from_rmeta,new_page = TRUE,
-           is.summary = c(TRUE,TRUE,rep(FALSE,8),TRUE),
-           clip = c(0.1,2.5), 
-           xlog = TRUE,
-           col = fpColors(box = "royalblue",
-                          line = "darkblue",
-                          summary = "royalblue",
-                          hrz_lines = "#444444"),
-           vertices = TRUE)
+cochrane_from_rmeta %>% 
+  forestplot(labeltext = tabletext, 
+             is.summary = c(rep(TRUE, 2), rep(FALSE, 8), TRUE),
+             clip = c(0.1, 2.5), 
+             xlog = TRUE, 
+             col = fpColors(box = "royalblue",
+                            line = "darkblue",
+                            summary = "royalblue"))
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           graph.pos = 4,
-           hrzl_lines = list("3" = gpar(lty = 2), 
-                             "11" = gpar(lwd = 1, columns = c(1:3,5), col = "#000044"),
-                             "12" = gpar(lwd = 1, lty = 2, columns = c(1:3,5), col = "#000044")),
-           cochrane_from_rmeta,new_page = TRUE,
-           is.summary = c(TRUE,TRUE,rep(FALSE,8),TRUE),
-           clip = c(0.1,2.5), 
-           xlog = TRUE,
-           col = fpColors(box = "royalblue",line = "darkblue", summary = "royalblue", hrz_lines = "#444444"))
+# Cochrane data from the 'rmeta'-package
+base_data <- tibble(mean  = c(0.578, 0.165, 0.246, 0.700, 0.348, 0.139, 1.017), 
+                    lower = c(0.372, 0.018, 0.072, 0.333, 0.083, 0.016, 0.365),
+                    upper = c(0.898, 1.517, 0.833, 1.474, 1.455, 1.209, 2.831),
+                    study = c("Auckland", "Block", "Doran", "Gamsu", "Morrison", "Papageorgiou", "Tauesch"),
+                    deaths_steroid = c("36", "1", "4", "14", "3", "1", "8"),
+                    deaths_placebo = c("60", "5", "11", "20", "7", "7", "10"),
+                    OR = c("0.58", "0.16", "0.25", "0.70", "0.35", "0.14", "1.02"))
+
+summary <- tibble(mean  = 0.531, 
+                  lower = 0.386,
+                  upper = 0.731,
+                  study = "Summary",
+                  OR = "0.53",
+                  summary = TRUE)
+
+header <- tibble(study = c("", "Study"),
+                 deaths_steroid = c("Deaths", "(steroid)"),
+                 deaths_placebo = c("Deaths", "(placebo)"),
+                 OR = c("", "OR"),
+                 summary = TRUE)
+
+empty_row <- tibble(mean = NA_real_)
+
+cochrane_output_df <- bind_rows(header,
+                                base_data,
+                                empty_row,
+                                summary)
+
+cochrane_output_df %>% 
+  forestplot(labeltext = c(study, deaths_steroid, deaths_placebo, OR), 
+             is.summary = summary,
+             clip = c(0.1, 2.5), 
+             xlog = TRUE, 
+             col = fpColors(box = "royalblue",
+                            line = "darkblue",
+                            summary = "royalblue"))
+
+
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
+cochrane_output_df %>% 
+  forestplot(labeltext = c(study, deaths_steroid, deaths_placebo, OR), 
+             is.summary = summary,
+             clip = c(0.1, 2.5), 
+             hrzl_lines = gpar(col = "#444444"),
+             xlog = TRUE,
+             col = fpColors(box = "royalblue",
+                            line = "darkblue", 
+                            summary = "royalblue"))
+
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
+cochrane_output_df %>% 
+  forestplot(labeltext = c(study, deaths_steroid, deaths_placebo, OR), 
+             is.summary = summary,
+             clip = c(0.1, 2.5), 
+             hrzl_lines = list("3" = gpar(lty = 2), 
+                               "11" = gpar(lwd = 1, columns = 1:4, col = "#000044")),
+             xlog = TRUE,
+             col = fpColors(box = "royalblue",
+                            line = "darkblue", 
+                            summary = "royalblue",
+                            hrz_lines = "#444444"))
+
+## ---- fig.height=4, fig.width=8, message=FALSE--------------------------------
+cochrane_output_df %>% 
+  forestplot(labeltext = c(study, deaths_steroid, deaths_placebo, OR), 
+             is.summary = summary,
+             hrzl_lines = list("3" = gpar(lty = 2), 
+                               "11" = gpar(lwd = 1, columns = 1:4, col = "#000044")),
+             clip = c(0.1, 2.5), 
+             xlog = TRUE,
+             col = fpColors(box = "royalblue",
+                            line = "darkblue",
+                            summary = "royalblue",
+                            hrz_lines = "#444444"),
+             vertices = TRUE)
 
 ## -----------------------------------------------------------------------------
-data(HRQoL)
+cochrane_output_df %>% 
+  forestplot(labeltext = c(study, deaths_steroid, deaths_placebo, OR), 
+             is.summary = summary,
+             graph.pos = 4,
+             hrzl_lines = list("3" = gpar(lty = 2), 
+                               "11" = gpar(lwd = 1, columns = c(1:3,5), col = "#000044"),
+                               "12" = gpar(lwd = 1, lty = 2, columns = c(1:3,5), col = "#000044")),
+             clip = c(0.1,2.5), 
+             xlog = TRUE,
+             col = fpColors(box = "royalblue",line = "darkblue", summary = "royalblue", hrz_lines = "#444444"))
+
+## -----------------------------------------------------------------------------
+data(dfHRQoL)
+dfHRQoL <- dfHRQoL %>% mutate(est = sprintf("%.2f", mean), .after = labeltext)
+
 clrs <- fpColors(box = "royalblue",line = "darkblue", summary = "royalblue")
-tabletext <- 
-  list(c(NA, rownames(HRQoL$Sweden)),
-       append(list(expression(beta)), sprintf("%.2f", HRQoL$Sweden[,"coef"])))
-forestplot(tabletext, 
-           rbind(rep(NA, 3), 
-                 HRQoL$Sweden),
-           col = clrs,
-           xlab = "EQ-5D index")
+tabletext <- list(c(NA, dfHRQoL %>% filter(group == "Sweden") %>% pull(labeltext)),
+                  append(list(expression(beta)), dfHRQoL %>% filter(group == "Sweden") %>% pull(est)))
+
+dfHRQoL %>% 
+  filter(group == "Sweden") %>% 
+  bind_rows(tibble(mean = NA_real_), .) %>% 
+  forestplot(labeltext = tabletext, 
+             col = clrs,
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-tabletext <- cbind(rownames(HRQoL$Sweden),
-                   sprintf("%.2f", HRQoL$Sweden[,"coef"]))
-forestplot(tabletext, 
-           txt_gp = fpTxtGp(label = gpar(fontfamily = "HersheyScript")),
-           rbind(HRQoL$Sweden),
-           col = clrs,
-           xlab = "EQ-5D index")
+# Priority order of fonts allow us to be a little flexible, if HersheyScript doesn't exist we fall back on Helvetica
+font <- list("HersheyScript", "Helvetica", "Consolas")
+dfHRQoL %>% 
+  filter(group == "Sweden") %>% 
+  forestplot(labeltext = c(labeltext, est), 
+             txt_gp = fpTxtGp(label = gpar(fontfamily = font)),
+             col = clrs,
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           txt_gp = fpTxtGp(label = list(gpar(fontfamily = "HersheyScript"),
-                                         gpar(fontfamily = "",
-                                              col = "#660000")),
-                            ticks = gpar(fontfamily = "", cex = 1),
-                            xlab  = gpar(fontfamily = "HersheySerif", cex = 1.5)),
-           rbind(HRQoL$Sweden),
-           col = clrs,
-           xlab = "EQ-5D index")
+dfHRQoL %>% 
+  filter(group == "Sweden") %>% 
+  forestplot(labeltext = c(labeltext, est), 
+             txt_gp = fpTxtGp(label = list(gpar(fontfamily = rev(font)),
+                                           gpar(fontfamily = "",
+                                                col = "#660000")),
+                              ticks = gpar(fontfamily = "", cex = 1),
+                              xlab  = gpar(fontfamily = "HersheySerif", cex = 1.5)),
+             col = clrs,
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           rbind(HRQoL$Sweden),
-           clip = c(-.1, Inf),
-           col = clrs,
-           xlab = "EQ-5D index")
+dfHRQoL %>% 
+  filter(group == "Sweden") %>% 
+  forestplot(labeltext = c(labeltext, est), 
+             clip = c(-.1, Inf),
+             col = clrs,
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           boxsize = 0.2,
-           rbind(HRQoL$Sweden),
-           clip = c(-.1, Inf),
-           col = clrs,
-           xlab = "EQ-5D index")
+dfHRQoL %>% 
+  filter(group == "Sweden") %>% 
+  forestplot(labeltext = c(labeltext, est), 
+             boxsize = 0.2,
+             clip = c(-.1, Inf),
+             col = clrs,
+             xlab = "EQ-5D index")
 
 ## ----fig.width=10, fig.height=4-----------------------------------------------
 library(grid)
@@ -148,13 +185,14 @@ pushViewport(viewport(layout = grid.layout(nrow = 1,
              )
 pushViewport(viewport(layout.pos.row = 1,
                       layout.pos.col = 1))
-forestplot(tabletext, 
-           title = "Original (1x)",
-           rbind(HRQoL$Sweden),
-           clip = c(-.1, Inf),
-           col = clrs,
-           xlab = "EQ-5D index",
-           new_page = FALSE)
+dfHRQoL %>% 
+  filter(group == "Sweden") %>% 
+  forestplot(labeltext = c(labeltext, est), 
+             title = "Sweden",
+             clip = c(-.1, Inf),
+             col = clrs,
+             xlab = "EQ-5D index",
+             new_page = FALSE)
 upViewport()
 pushViewport(viewport(layout.pos.row = 1,
                       layout.pos.col = 2))
@@ -162,142 +200,123 @@ grid.rect(gp = gpar(fill = "#dddddd", col = "#eeeeee"))
 upViewport()
 pushViewport(viewport(layout.pos.row = 1,
                       layout.pos.col = 3))
-forestplot(tabletext, 
-           title = "0.5x",
-           fn.ci_norm = function(size, ...) {
-             fpDrawNormalCI(size = size * 0.5, ...)
-           },
-           rbind(HRQoL$Sweden),
-           clip = c(-.1, Inf),
-           col = clrs,
-           xlab = "EQ-5D index",
-           new_page = FALSE)
+
+dfHRQoL %>% 
+  filter(group == "Denmark") %>% 
+  forestplot(labeltext = c(labeltext, est), 
+             title = "Denmark",
+             clip = c(-.1, Inf),
+             col = clrs,
+             xlab = "EQ-5D index",
+             new_page = FALSE)
 upViewport(2)
 
 ## -----------------------------------------------------------------------------
-tabletext <- tabletext[,1]
-forestplot(tabletext, 
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.1, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           xlab = "EQ-5D index")
-
-
-## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-            fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-            boxsize = .25, # We set the box size to better visualize the type
-            line.margin = .1, # We need to add this to avoid crowding
-            mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-            lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-            upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-            clip = c(-.125, 0.075),
-            col = fpColors(box = c("blue", "darkred")),
-            xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(clip = c(-.1, 0.075),
+             shapes_gp = fpShapesGp(box = c("blue", "darkred") %>% lapply(function(x) gpar(fill = x, col = "#555555")),
+                                    default = gpar(vertices = TRUE)),
+             ci.vertices = TRUE,
+             ci.vertices.height = 0.05,
+             boxsize = .1,
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-            fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-            boxsize = .25, # We set the box size to better visualize the type
-            line.margin = .1, # We need to add this to avoid crowding
-            mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-            lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-            upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-            clip = c(-.125, 0.075),
-            lty.ci = c(1, 2),
-            col = fpColors(box = c("blue", "darkred")),
-            xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             shapes_gp = fpShapesGp(box = c("blue", "darkred") %>% lapply(function(x) gpar(fill = x, col = "#555555")),
+                                    default = gpar(vertices = TRUE)),
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           legend = c("Sweden", "Denmark"),
-           fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-           boxsize = .25, # We set the box size to better visualize the type
-           line.margin = .1, # We need to add this to avoid crowding
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.125, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             lty.ci = c(1, 2),
+             col = fpColors(box = c("blue", "darkred")),
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           legend_args = fpLegend(pos = list(x = .85, y = 0.25), 
-                                  gp = gpar(col = "#CCCCCC", fill = "#F9F9F9")),
-           legend = c("Sweden", "Denmark"),
-           fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-           boxsize = .25, # We set the box size to better visualize the type
-           line.margin = .1, # We need to add this to avoid crowding
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.125, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(legend = c("Swedes", "Danes"),
+             fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             col = fpColors(box = c("blue", "darkred")),
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           legend = c("Sweden", "Denmark"),
-           fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-           boxsize = .25, # We set the box size to better visualize the type
-           line.margin = .1, # We need to add this to avoid crowding
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.125, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           xticks = c(-.1, -0.05, 0, .05),
-           xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(legend = c("Swedes", "Danes"),
+             legend_args = fpLegend(pos = list(x = .85, y = 0.25), 
+                                    gp = gpar(col = "#CCCCCC", fill = "#F9F9F9")),
+             fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             col = fpColors(box = c("blue", "darkred")),
+             xlab = "EQ-5D index")
+
+## -----------------------------------------------------------------------------
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             col = fpColors(box = c("blue", "darkred")),
+             xticks = c(-.1, -0.05, 0, .05),
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
 xticks <- seq(from = -.1, to = .05, by = 0.025)
 xtlab <- rep(c(TRUE, FALSE), length.out = length(xticks))
 attr(xticks, "labels") <- xtlab
-forestplot(tabletext, 
-           legend = c("Sweden", "Denmark"),
-           fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-           boxsize = .25, # We set the box size to better visualize the type
-           line.margin = .1, # We need to add this to avoid crowding
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.125, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           xticks = xticks,
-           xlab = "EQ-5D index")
+
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             col = fpColors(box = c("blue", "darkred")),
+             xticks = xticks,
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           legend = c("Sweden", "Denmark"),
-           fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-           boxsize = .25, # We set the box size to better visualize the type
-           line.margin = .1, # We need to add this to avoid crowding
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.125, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           grid = TRUE,
-           xticks = c(-.1, -0.05, 0, .05),
-           xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             col = fpColors(box = c("blue", "darkred")),
+             grid = TRUE,
+             xticks = c(-.1, -0.05, 0, .05),
+             xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-forestplot(tabletext, 
-           legend = c("Sweden", "Denmark"),
-           fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
-           boxsize = .25, # We set the box size to better visualize the type
-           line.margin = .1, # We need to add this to avoid crowding
-           mean = cbind(HRQoL$Sweden[, "coef"], HRQoL$Denmark[, "coef"]),
-           lower = cbind(HRQoL$Sweden[, "lower"], HRQoL$Denmark[, "lower"]),
-           upper = cbind(HRQoL$Sweden[, "upper"], HRQoL$Denmark[, "upper"]),
-           clip = c(-.125, 0.075),
-           col = fpColors(box = c("blue", "darkred")),
-           grid = structure(c(-.1, -.05, .05), 
-                            gp = gpar(lty = 2, col = "#CCCCFF")), 
-           xlab = "EQ-5D index")
+dfHRQoL %>%
+  group_by(group) %>%
+  forestplot(fn.ci_norm = c(fpDrawNormalCI, fpDrawCircleCI),
+             boxsize = .25, # We set the box size to better visualize the type
+             line.margin = .1, # We need to add this to avoid crowding
+             clip = c(-.125, 0.075),
+             col = fpColors(box = c("blue", "darkred")),
+             grid = structure(c(-.1, -.05, .05), 
+                              gp = gpar(lty = 2, col = "#CCCCFF")), 
+             xlab = "EQ-5D index")
 
 ## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  grid_arg <- c(-.1, -.05, .05)

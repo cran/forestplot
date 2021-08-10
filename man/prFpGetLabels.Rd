@@ -10,10 +10,12 @@ prFpGetLabels(label_type, labeltext, align, nc, nr, is.summary, txt_gp, col)
 \item{label_type}{The type of text labels}
 
 \item{labeltext}{A list, matrix, vector or expression with the names of each
-row. The list should be wrapped in m x n number to resemble a matrix:
+row or the name of the column if using the *dplyr* select syntax - defaults to "labeltext".
+Note that when using `group_by` a separate labeltext is not allowed.
+The list should be wrapped in m x n number to resemble a matrix:
 \code{list(list("rowname 1 col 1", "rowname 2 col 1"), list("r1c2", expression(beta))}.
 You can also provide a matrix although this cannot have expressions by design:
-\code{matrix(c("rowname 1 col 1", "rowname 2 col 1", "r1c2", "beta"), ncol=2)}.
+\code{matrix(c("rowname 1 col 1", "rowname 2 col 1", "r1c2", "beta"), ncol = 2)}.
 Use \code{NA}:s for blank spaces and if you provide a full column with \code{NA} then
 that column is a empty column that adds some space. \emph{Note:} If you do not
 provide the mean/lower/upper arguments the function expects the label text
