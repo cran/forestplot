@@ -133,8 +133,11 @@ dfHRQoL %>%
              xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------
-# Priority order of fonts allow us to be a little flexible, if HersheyScript doesn't exist we fall back on Helvetica
-font <- list("HersheyScript", "Helvetica", "Consolas")
+# You can set directly the font to desired value, the next three lines are just for handling MacOs on CRAN
+font <- "mono"
+if (grepl("Ubuntu", Sys.info()["version"])) {
+  font <- "HersheyGothicEnglish"
+}
 dfHRQoL %>% 
   filter(group == "Sweden") %>% 
   forestplot(labeltext = c(labeltext, est), 
@@ -146,11 +149,11 @@ dfHRQoL %>%
 dfHRQoL %>% 
   filter(group == "Sweden") %>% 
   forestplot(labeltext = c(labeltext, est), 
-             txt_gp = fpTxtGp(label = list(gpar(fontfamily = rev(font)),
+             txt_gp = fpTxtGp(label = list(gpar(fontfamily = font),
                                            gpar(fontfamily = "",
                                                 col = "#660000")),
                               ticks = gpar(fontfamily = "", cex = 1),
-                              xlab  = gpar(fontfamily = "HersheySerif", cex = 1.5)),
+                              xlab  = gpar(fontfamily = font, cex = 1.5)),
              col = clrs,
              xlab = "EQ-5D index")
 
@@ -304,6 +307,7 @@ dfHRQoL %>%
              col = fpColors(box = c("blue", "darkred")),
              grid = TRUE,
              xticks = c(-.1, -0.05, 0, .05),
+             zero = 0,
              xlab = "EQ-5D index")
 
 ## -----------------------------------------------------------------------------

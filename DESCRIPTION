@@ -1,5 +1,5 @@
 Package: forestplot
-Version: 2.0.0
+Version: 2.0.1
 Title: Advanced Forest Plot Using 'grid' Graphics
 Authors@R: c(person(given = "Max",
                     family = "Gordon",
@@ -26,9 +26,9 @@ Encoding: UTF-8
 NeedsCompilation: no
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
-Packaged: 2021-08-09 20:13:41 UTC; max
+Packaged: 2021-09-01 20:00:36 UTC; max
 Author: Max Gordon [aut, cre],
   Thomas Lumley [aut, ctb]
 Maintainer: Max Gordon <max@gforge.se>
 Repository: CRAN
-Date/Publication: 2021-08-10 15:40:08 UTC
+Date/Publication: 2021-09-03 12:30:02 UTC
