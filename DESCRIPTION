@@ -1,5 +1,5 @@
 Package: forestplot
-Version: 2.0.1
+Version: 3.0.0
 Title: Advanced Forest Plot Using 'grid' Graphics
 Authors@R: c(person(given = "Max",
                     family = "Gordon",
@@ -20,15 +20,16 @@ License: GPL-2
 URL: https://gforge.se/packages/
 BugReports: https://github.com/gforge/forestplot/issues
 Biarch: yes
-Depends: R (>= 3.5.0), grid, magrittr, checkmate
-Suggests: testthat, abind, knitr, rmarkdown, rmeta, dplyr, tidyr, rlang
+Depends: R (>= 3.5.0), grid, checkmate, abind
+Suggests: dplyr, knitr, purrr, rmarkdown, rmeta, testthat, tibble,
+        tidyr, tidyselect, rlang
 Encoding: UTF-8
 NeedsCompilation: no
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
-Packaged: 2021-09-01 20:00:36 UTC; max
+RoxygenNote: 7.2.1
+Packaged: 2022-09-28 21:47:17 UTC; max
 Author: Max Gordon [aut, cre],
   Thomas Lumley [aut, ctb]
 Maintainer: Max Gordon <max@gforge.se>
 Repository: CRAN
-Date/Publication: 2021-09-03 12:30:02 UTC
+Date/Publication: 2022-09-29 10:50:05 UTC

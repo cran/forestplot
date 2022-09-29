@@ -36,7 +36,7 @@
 #'  any other line type than 1 since there is a risk of a dash occurring
 #'  at the very end, i.e. showing incorrectly narrow confidence interval.
 #' @param vertices.height The height hoft the vertices. Defaults to npc units
-#'  corresponding to 10\% of the row height.
+#'  corresponding to 10% of the row height.
 #' @param ... Allows additional parameters for sibling functions
 #' @return \code{void} The function outputs the line using grid compatible
 #'  functions and does not return anything.
@@ -61,22 +61,24 @@ fpDrawNormalCI <- function(lower_limit,
                            vertices,
                            vertices.height = .1,
                            shapes_gp = fpShapesGp(),
-                           shape_coordinates = structure(c(1,1),max.coords = c(1,1)),
+                           shape_coordinates = structure(c(1, 1), max.coords = c(1, 1)),
                            ...) {
-
   if (is.na(lower_limit) ||
-      is.na(estimate) ||
-      is.na(upper_limit))
-    return();
+    is.na(estimate) ||
+    is.na(upper_limit)) {
+    return()
+  }
 
   # Funciton for drawing the confidence line
-  prFpDrawLine(lower_limit = lower_limit,
-               upper_limit = upper_limit,
-               line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
-               vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
-               y.offset = y.offset,
-               vertices = vertices,
-               vertices.height = vertices.height)
+  prFpDrawLine(
+    lower_limit = lower_limit,
+    upper_limit = upper_limit,
+    line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
+    vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
+    y.offset = y.offset,
+    vertices = vertices,
+    vertices.height = vertices.height
+  )
 
   # If the box is outside the plot the it shouldn't be plotted
   box <- convertX(unit(estimate, "native"), "npc", valueOnly = TRUE)
@@ -86,22 +88,26 @@ fpDrawNormalCI <- function(lower_limit,
   skipbox <- box < 0 || box > 1
 
   # Lastly draw the box if it is still there
-  if (!skipbox)  {
+  if (!skipbox) {
     # Convert size into 'snpc'
-    if (!is.unit(size))  {
+    if (!is.unit(size)) {
       size <- unit(size, "snpc")
     }
 
     # Draw the actual box
-    gp <- prGetShapeGp(shapes_gp = shapes_gp,
-                       coords = shape_coordinates,
-                       object = "box",
-                       default = gpar(fill = clr.marker, col = clr.marker))
-    grid.rect(x = unit(estimate, "native"),
-              y = y.offset,
-              width = size,
-              height = size,
-              gp = gp)
+    gp <- prGetShapeGp(
+      shapes_gp = shapes_gp,
+      coords = shape_coordinates,
+      object = "box",
+      default = gpar(fill = clr.marker, col = clr.marker)
+    )
+    grid.rect(
+      x = unit(estimate, "native"),
+      y = y.offset,
+      width = size,
+      height = size,
+      gp = gp
+    )
   }
 }
 
@@ -114,10 +120,16 @@ fpDrawNormalCI <- function(lower_limit,
 #' @return a \code{\link[grid]{gpar}} object
 #'  containing these three attributes
 prDefaultGp <- function(col, lwd, lty) {
-  ret = list()
-  if (!missing(col)) {ret$col = col}
-  if (!missing(lwd)) {ret$lwd = lwd}
-  if (!missing(lty)) {ret$lty = lty}
+  ret <- list()
+  if (!missing(col)) {
+    ret$col <- col
+  }
+  if (!missing(lwd)) {
+    ret$lwd <- lwd
+  }
+  if (!missing(lty)) {
+    ret$lty <- lty
+  }
   return(do.call(grid::gpar, ret))
 }
 
@@ -136,34 +148,36 @@ prDefaultGp <- function(col, lwd, lty) {
 #' @param vertices_gp A \code{\link[grid]{gpar}} for drawing the vertices.
 #'  unspecified attributes in vertices_gp default to line_gp.
 #' @keywords internal
-#' @import magrittr
 #' @importFrom grid gpar
 #' @return \code{void}
 prFpDrawLine <- function(lower_limit, upper_limit, clr.line, lwd, lty, y.offset,
                          vertices, vertices.height = .1, line_gp, vertices_gp) {
 
   # clr.line, lwd and lty are obsolete but are maintained for backward compatibility
-  line_gp0 = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)
+  line_gp0 <- prDefaultGp(col = clr.line, lwd = lwd, lty = lty)
 
   if (missing(line_gp) & missing(vertices_gp)) {
-    line_gp = line_gp0
-    vertices_gp = line_gp0
+    line_gp <- line_gp0
+    vertices_gp <- line_gp0
   } else {
-    line_gp = prMergeGp(line_gp0, line_gp)
+    line_gp <- prMergeGp(line_gp0, line_gp)
   }
 
   # Draw the lines if the lower limit is
   # actually below the upper limit
-  if (lower_limit >= upper_limit)
+  if (lower_limit >= upper_limit) {
     return()
+  }
 
-  if (any(vertices.height < 0))
+  if (any(vertices.height < 0)) {
     stop("The vertices height cannot be negative")
+  }
 
   if (inherits(vertices.height, "unit")) {
     vertices.height <- convertY(vertices.height,
-                                unitTo = "npc",
-                                valueOnly = TRUE)
+      unitTo = "npc",
+      valueOnly = TRUE
+    )
   }
 
   if (!inherits(y.offset, "unit")) {
@@ -176,19 +190,25 @@ prFpDrawLine <- function(lower_limit, upper_limit, clr.line, lwd, lty, y.offset,
   # of the line)
   clipupper <-
     convertX(unit(upper_limit, "native"),
-             "npc",
-             valueOnly = TRUE) > 1
+      "npc",
+      valueOnly = TRUE
+    ) > 1
   cliplower <-
     convertX(unit(lower_limit, "native"),
-             "npc",
-             valueOnly = TRUE) < 0
+      "npc",
+      valueOnly = TRUE
+    ) < 0
 
   gp_list <- line_gp
-  if (is.null(gp_list$lty)) {gp_list$lty = 1}
+  if (is.null(gp_list$lty)) {
+    gp_list$lty <- 1
+  }
 
-  grid_line_args <- list(y = y.offset,
-                         gp = do.call(gpar, gp_list))
-  verticals = "none"
+  grid_line_args <- list(
+    y = y.offset,
+    gp = do.call(gpar, gp_list)
+  )
+  verticals <- "none"
   if (clipupper || cliplower) {
     # A version where arrows are added to the part outside
     # the limits of the graph
@@ -218,72 +238,86 @@ prFpDrawLine <- function(lower_limit, upper_limit, clr.line, lwd, lty, y.offset,
   if (clipupper || cliplower) {
     # Make arrow the same height the intended vertices
     # Old code: unit(0.05, "inches")
-    radians = 30 * pi/180
-    vertices.height_mm = convertY(unit(vertices.height, "npc"),
-                                  "mm",
-                                  valueOnly = TRUE)
-    arrow_length = max(abs(vertices.height_mm)) / tan(radians)
+    radians <- 30 * pi / 180
+    vertices.height_mm <- convertY(unit(vertices.height, "npc"),
+      "mm",
+      valueOnly = TRUE
+    )
+    arrow_length <- max(abs(vertices.height_mm)) / tan(radians)
     y_mm <- convertY(grid_line_args$y[1], "mm", valueOnly = TRUE)
     arrow_args <-
-        list(y =
-               unit(c(y_mm + vertices.height_mm,
-                      y_mm,
-                      y_mm - vertices.height_mm),
-                    "mm") %>%
-               convertY("npc"))
-    gp_list$lty = 1
-    arrow_args$gp = do.call(gpar, gp_list)
+      list(
+        y =
+          unit(
+            c(
+              y_mm + vertices.height_mm,
+              y_mm,
+              y_mm - vertices.height_mm
+            ),
+            "mm"
+          ) |>
+            convertY("npc")
+      )
+    gp_list$lty <- 1
+    arrow_args$gp <- do.call(gpar, gp_list)
 
-    if (clipupper)  {
+    if (clipupper) {
       x <- max(grid_line_args$x)
-      x <- unit.c(x - unit(arrow_length, "mm"),
-                  x,
-                  x - unit(arrow_length, "mm")) %>%
+      x <- unit.c(
+        x - unit(arrow_length, "mm"),
+        x,
+        x - unit(arrow_length, "mm")
+      ) |>
         convertX("npc")
-      arrow_args$x = x
+      arrow_args$x <- x
       do.call(grid.lines, arrow_args)
     }
 
-    if (cliplower)  {
+    if (cliplower) {
       x <- min(grid_line_args$x)
-      x <- unit.c(x + unit(arrow_length, "mm"),
-                  x,
-                  x + unit(arrow_length, "mm")) %>%
+      x <- unit.c(
+        x + unit(arrow_length, "mm"),
+        x,
+        x + unit(arrow_length, "mm")
+      ) |>
         convertX("npc")
       arrow_args$x <- x
       do.call(grid.lines, arrow_args)
     }
   }
 
-  if (missing(vertices))  {
-    if (gp_list$lty != 1)
-      vertices = TRUE
-    else
-      vertices = FALSE
+  if (missing(vertices)) {
+    if (gp_list$lty != 1) {
+      vertices <- TRUE
+    } else {
+      vertices <- FALSE
+    }
   }
 
-  if (vertices && verticals != "none")  {
-
-    if (length(vertices.height) == 1)  {
+  if (vertices && verticals != "none") {
+    if (length(vertices.height) == 1) {
       vertices.height <- c(vertices.height, -vertices.height)
-    }else{
+    } else {
       vertices.height <- range(vertices.height)
     }
     y <- convertY(grid_line_args$y[1], "npc", valueOnly = TRUE)
     y_spread <- y + vertices.height
-    gp_list$lty = 1
-    gp_vertices = prMergeGp(gp_list, vertices_gp)
-    if (verticals != "right")  {
-      grid.lines(x = rep(grid_line_args$x[1], 2),
-                 y = y_spread,
-                 gp = gp_vertices)
+    gp_list$lty <- 1
+    gp_vertices <- prMergeGp(gp_list, vertices_gp)
+    if (verticals != "right") {
+      grid.lines(
+        x = rep(grid_line_args$x[1], 2),
+        y = y_spread,
+        gp = gp_vertices
+      )
     }
-    if (verticals != "left")  {
-      grid.lines(x = rep(grid_line_args$x[2], 2),
-                 y = y_spread,
-                 gp = gp_vertices)
+    if (verticals != "left") {
+      grid.lines(
+        x = rep(grid_line_args$x[2], 2),
+        y = y_spread,
+        gp = gp_vertices
+      )
     }
-
   }
 }
 
@@ -301,40 +335,44 @@ fpDrawDiamondCI <- function(lower_limit,
                             vertices,
                             vertices.height = .1,
                             shapes_gp = fpShapesGp(),
-                            shape_coordinates = structure(c(1,1),max.coords = c(1,1)),
+                            shape_coordinates = structure(c(1, 1), max.coords = c(1, 1)),
                             ...) {
   if (is.na(lower_limit) ||
-      is.na(estimate) ||
-      is.na(upper_limit))
-    return();
+    is.na(estimate) ||
+    is.na(upper_limit)) {
+    return()
+  }
 
   # Funciton for drawing the confidence line
-  prFpDrawLine(lower_limit = lower_limit,
-               upper_limit = upper_limit,
-               line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
-               vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
-               y.offset = y.offset,
-               vertices = vertices,
-               vertices.height = vertices.height)
+  prFpDrawLine(
+    lower_limit = lower_limit,
+    upper_limit = upper_limit,
+    line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
+    vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
+    y.offset = y.offset,
+    vertices = vertices,
+    vertices.height = vertices.height
+  )
 
   # If the box is outside the plot the it shouldn't be plotted
   box <- convertX(unit(estimate, "native"), "npc", valueOnly = TRUE)
   if (box >= 0 &&
-        box <= 1)  {
+    box <= 1) {
 
     # Convert size if needed
-    default.size.unit = "snpc"
-    if (is.unit(size))  {
+    default.size.unit <- "snpc"
+    if (is.unit(size)) {
       size <- convertUnit(size, unitTo = "mm", valueOnly = TRUE)
-      default.size.unit = "mm"
+      default.size.unit <- "mm"
     }
 
-    grid.polygon(x = unit(estimate, "native") +
-                   unit(c(-size/2, 0, +size/2, 0), default.size.unit),
-                 y = unit(y.offset, "npc") +
-                   unit(c(0, size/2, 0, -size/2), default.size.unit),
-                 gp = prGetShapeGp(shapes_gp, shape_coordinates, "box", default = gpar(fill = clr.marker, col = clr.marker)))
-
+    grid.polygon(
+      x = unit(estimate, "native") +
+        unit(c(-size / 2, 0, +size / 2, 0), default.size.unit),
+      y = unit(y.offset, "npc") +
+        unit(c(0, size / 2, 0, -size / 2), default.size.unit),
+      gp = prGetShapeGp(shapes_gp, shape_coordinates, "box", default = gpar(fill = clr.marker, col = clr.marker))
+    )
   }
 }
 
@@ -351,39 +389,44 @@ fpDrawCircleCI <- function(lower_limit,
                            vertices,
                            vertices.height = .1,
                            shapes_gp = fpShapesGp(),
-                           shape_coordinates = structure(c(1,1),max.coords = c(1,1)),
+                           shape_coordinates = structure(c(1, 1), max.coords = c(1, 1)),
                            ...) {
   if (is.na(lower_limit) ||
-      is.na(estimate) ||
-      is.na(upper_limit))
-    return();
+    is.na(estimate) ||
+    is.na(upper_limit)) {
+    return()
+  }
 
   # Funciton for drawing the confidence line
-  prFpDrawLine(lower_limit = lower_limit,
-               upper_limit = upper_limit,
-               line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
-               vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
-               y.offset = y.offset,
-               vertices = vertices,
-               vertices.height = vertices.height)
+  prFpDrawLine(
+    lower_limit = lower_limit,
+    upper_limit = upper_limit,
+    line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
+    vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
+    y.offset = y.offset,
+    vertices = vertices,
+    vertices.height = vertices.height
+  )
 
   # If the box is outside the plot the it shouldn't be plotted
   box <- convertX(unit(estimate, "native"), "npc", valueOnly = TRUE)
 
   if (box >= 0 &&
-        box <= 1)  {
+    box <= 1) {
     # Convert size into 'mm' and switch to radius
-    if (is.unit(size))  {
+    if (is.unit(size)) {
       size <- convertUnit(size, unitTo = "mm", valueOnly = TRUE)
-      size <- unit(size/2, "mm")
+      size <- unit(size / 2, "mm")
     } else {
-      size <- unit(size/2, "snpc")
+      size <- unit(size / 2, "snpc")
     }
 
-    grid.circle(x = unit(estimate, "native"),
-                y = unit(y.offset, "npc"),
-                r = size,
-                gp = prGetShapeGp(shapes_gp, shape_coordinates, "box", default = gpar(fill = clr.marker, col = clr.marker)))
+    grid.circle(
+      x = unit(estimate, "native"),
+      y = unit(y.offset, "npc"),
+      r = size,
+      gp = prGetShapeGp(shapes_gp, shape_coordinates, "box", default = gpar(fill = clr.marker, col = clr.marker))
+    )
   }
 }
 
@@ -402,38 +445,42 @@ fpDrawPointCI <- function(lower_limit,
                           vertices.height = .1,
                           pch = 1,
                           shapes_gp = fpShapesGp(),
-                          shape_coordinates = structure(c(1,1),max.coords = c(1,1)),
+                          shape_coordinates = structure(c(1, 1), max.coords = c(1, 1)),
                           ...) {
   if (is.na(lower_limit) ||
-      is.na(estimate) ||
-      is.na(upper_limit))
-    return();
+    is.na(estimate) ||
+    is.na(upper_limit)) {
+    return()
+  }
 
   # Funciton for drawing the confidence line
-  prFpDrawLine(lower_limit = lower_limit,
-               upper_limit = upper_limit,
-               line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
-               vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
-               y.offset = y.offset,
-               vertices = vertices,
-               vertices.height = vertices.height)
+  prFpDrawLine(
+    lower_limit = lower_limit,
+    upper_limit = upper_limit,
+    line_gp = prGetShapeGp(shapes_gp, shape_coordinates, "lines", default = prDefaultGp(col = clr.line, lwd = lwd, lty = lty)),
+    vertices_gp = prGetShapeGp(shapes_gp, shape_coordinates, "vertices", nodefault = TRUE),
+    y.offset = y.offset,
+    vertices = vertices,
+    vertices.height = vertices.height
+  )
 
   # If the box is outside the plot the it shouldn't be plotted
   box <- convertX(unit(estimate, "native"), "npc", valueOnly = TRUE)
 
   if (box >= 0 &&
-        box <= 1)  {
+    box <= 1) {
     # Convert size into 'snpc' if not given
-    if (!is.unit(size))  {
+    if (!is.unit(size)) {
       size <- unit(size, "snpc")
     }
 
-    grid.points(x = unit(estimate, "native"),
-                y = unit(y.offset, "npc"),
-                size = size,
-                pch = pch,
-                gp = prGetShapeGp(shapes_gp, shape_coordinates, "box", default = gpar(fill = clr.marker, col = clr.marker)))
-
+    grid.points(
+      x = unit(estimate, "native"),
+      y = unit(y.offset, "npc"),
+      size = size,
+      pch = pch,
+      gp = prGetShapeGp(shapes_gp, shape_coordinates, "box", default = gpar(fill = clr.marker, col = clr.marker))
+    )
   }
 }
 
@@ -443,36 +490,40 @@ fpDrawPointCI <- function(lower_limit,
 fpDrawSummaryCI <- function(lower_limit, estimate, upper_limit,
                             size, col, y.offset = 0.5,
                             shapes_gp = fpShapesGp(),
-                            shape_coordinates = structure(c(1,1),max.coords = c(1,1)),
+                            shape_coordinates = structure(c(1, 1), max.coords = c(1, 1)),
                             ...) {
   if (is.na(lower_limit) ||
-      is.na(estimate) ||
-      is.na(upper_limit))
-    return();
+    is.na(estimate) ||
+    is.na(upper_limit)) {
+    return()
+  }
 
   # Convert size into 'npc' value only if
   # it is provided as a unit() object
   size <- ifelse(is.unit(size),
-                 convertUnit(size, unitTo = "npc", valueOnly = TRUE),
-                 size)*.9
-  grid.polygon(x = unit(c(lower_limit, estimate, upper_limit, estimate), "native"),
-               y = unit(y.offset +
-                          c(0, 0.5 * size, 0, -0.5 * size), "npc"),
-               gp = prGetShapeGp(shapes_gp, shape_coordinates, "summary", default = gpar(fill = col,col = col))
-               )
+    convertUnit(size, unitTo = "npc", valueOnly = TRUE),
+    size
+  ) * .9
+  grid.polygon(
+    x = unit(c(lower_limit, estimate, upper_limit, estimate), "native"),
+    y = unit(y.offset +
+      c(0, 0.5 * size, 0, -0.5 * size), "npc"),
+    gp = prGetShapeGp(shapes_gp, shape_coordinates, "summary", default = gpar(fill = col, col = col))
+  )
 }
 
 #' @rdname fpDrawCI
 #' @export
 fpDrawBarCI <- function(lower_limit, estimate, upper_limit, size, col, y.offset = 0.5,
                         shapes_gp = fpShapesGp(),
-                        shape_coordinates = structure(c(1,1),max.coords = c(1,1)),
-                        ...)
-{
+                        shape_coordinates = structure(c(1, 1), max.coords = c(1, 1)),
+                        ...) {
   size <- ifelse(is.unit(size), convertUnit(size, unitTo = "npc", valueOnly = TRUE), size) * 0.9
-  grid.polygon(x = unit(c(lower_limit, upper_limit, upper_limit, lower_limit), "native"),
-               y = unit(y.offset + 0.5 * c(1, 1, -1, -1) * size, "npc"),
-               gp = prGetShapeGp(shapes_gp, shape_coordinates, "summary", default = gpar(fill = col,col = col)))
+  grid.polygon(
+    x = unit(c(lower_limit, upper_limit, upper_limit, lower_limit), "native"),
+    y = unit(y.offset + 0.5 * c(1, 1, -1, -1) * size, "npc"),
+    gp = prGetShapeGp(shapes_gp, shape_coordinates, "summary", default = gpar(fill = col, col = col))
+  )
 }
 
 #' A function for the color elements used in forestplot()
@@ -489,7 +540,7 @@ fpDrawBarCI <- function(lower_limit, estimate, upper_limit, size, col, y.offset 
 #' If you have several values per row in a forestplot you can set
 #' a color to a vector where the first value represents the first
 #' line/box, second the second line/box etc. The vectors are only
-#' valid for the \code{box} \& \code{lines} options.
+#' valid for the \code{box} & \code{lines} options.
 #'
 #' This function is a copy of the \code{\link[rmeta]{meta.colors}}
 #' function in the \pkg{rmeta} package.
@@ -503,13 +554,7 @@ fpDrawBarCI <- function(lower_limit, estimate, upper_limit, size, col, y.offset 
 #' @param text The color of the text
 #' @param axes The color of the x-axis at the bottom
 #' @param hrz_lines The color of the horizontal lines
-#' @return list A list with the elements:
-#' \item{box}{the color of the box/marker}
-#' \item{lines}{the color of the lines}
-#' \item{summary}{the color of the summary}
-#' \item{zero}{the color of the zero vertical line}
-#' \item{text}{the color of the text}
-#' \item{axes}{the color of the axes}
+#' @return A list with key elements
 #'
 #' @author Max Gordon, Thomas Lumley
 #' @importFrom grDevices colorRampPalette
@@ -520,116 +565,135 @@ fpDrawBarCI <- function(lower_limit, estimate, upper_limit, size, col, y.offset 
 #' @family forestplot functions
 #'
 fpColors <- function(all.elements,
-                     box        = "black",
-                     lines      = "gray",
-                     summary    = "black",
-                     zero       = "lightgray",
-                     text       = "black",
-                     axes       = "black",
-                     hrz_lines  = "black")
-{
+                     box = "black",
+                     lines = "gray",
+                     summary = "black",
+                     zero = "lightgray",
+                     text = "black",
+                     axes = "black",
+                     hrz_lines = "black") {
   if (missing(all.elements)) {
     # Make sure the color lengths match
     # if nott then add a slightly lighter/darker shade
-    if (length(box) > length(lines))  {
+    if (length(box) > length(lines)) {
       nl <- length(lines)
-      for (n in (nl + 1):length(box))
-        lines <- append(lines,
-                        colorRampPalette(c(box[n], par("bg")))(10)[2])
-    }else if (length(box) < length(lines))  {
+      for (n in (nl + 1):length(box)) {
+        lines <- append(
+          lines,
+          colorRampPalette(c(box[n], par("bg")))(10)[2]
+        )
+      }
+    } else if (length(box) < length(lines)) {
       nl <- length(box)
-      for (n in (nl + 1):length(lines))
-        box <- append(box,
-                      colorRampPalette(c(lines[n], par("fg")))(10)[2])
+      for (n in (nl + 1):length(lines)) {
+        box <- append(
+          box,
+          colorRampPalette(c(lines[n], par("fg")))(10)[2]
+        )
+      }
     }
 
-    if (length(summary) < length(box))
+    if (length(summary) < length(box)) {
       summary <- rep(summary, length.out = length(box))
-    ret <- list(box = box,
-                lines = lines,
-                summary = summary,
-                zero = zero,
-                text = text,
-                axes = axes,
-                hrz_lines = hrz_lines)
-  }else{
-    if (is.null(all.elements))
+    }
+    ret <- list(
+      box = box,
+      lines = lines,
+      summary = summary,
+      zero = zero,
+      text = text,
+      axes = axes,
+      hrz_lines = hrz_lines
+    )
+  } else {
+    if (is.null(all.elements)) {
       all.elements <- par("fg")
+    }
 
-    ret <- list(box = all.elements,
-                lines = all.elements,
-                summary = all.elements,
-                zero = all.elements,
-                text = all.elements,
-                axes = all.elements,
-                hrz_lines = all.elements)
+    ret <- list(
+      box = all.elements,
+      lines = all.elements,
+      summary = all.elements,
+      zero = all.elements,
+      text = all.elements,
+      axes = all.elements,
+      hrz_lines = all.elements
+    )
   }
 
 
   return(structure(ret,
-                   class = c("fpColors", class(ret))))
+    class = c("fpColors", class(ret))
+  ))
 }
 
-#' A function for graphical parameters of the shapes used in forestplot()
+#' A function for graphical parameters of the shapes used in `forestplot()`
 #'
 #' This function encapsulates all the non-text elements that are used in the
-#' \code{\link{forestplot}} function. As there are plenty of shapes
+#' [`forestplot()`] function. As there are plenty of shapes
 #' options this function gathers them all in one place.
 #'
-#' This function obsoletes \code{\link{fpColors}}.
+#' This function obsoletes [`fpColors()`].
 #'
 #' If some, but not all parameters of a shape (e.g. box) are specified in gpar()
 #' such as setting lwd but not line color, the unspecified parameters default
-#' to the ones specified in \code{default}, then, default to legacy parameters
-#' of \code{forestplot} such as \code{col}.
+#' to the ones specified in `default`, then, default to legacy parameters
+#' of `forestplot` such as `col`.
 #'
-#' Parameters \code{box}, \code{lines}, \code{vertices}, \code{summary} may be set as list
+#' Parameters `box`, `lines`, `vertices`, `summary` may be set as list
 #' containing several gpars. The length of the list must either be equal to the number of bands
 #' per label or to the number of bands multiplied by the number of labels, allowing specification
 #' of different styles for different parts of the forest plot.
 #'
-#' The parameter \code{grid} can either be a single gpar or a list of gpars with as many
-#' elements as there are lines in the grid (as set by the \code{xticks} or \code{grid}
+#' The parameter `grid` can either be a single gpar or a list of gpars with as many
+#' elements as there are lines in the grid (as set by the `xticks` or `grid`
 #' arguments of forestplot)
 #'
-#' Parameters \code{zero}, \code{axes}, \code{hrz_lines} must either be NULL or gpar
+#' Parameters `zero`, `axes`, `hrz_lines` must either be NULL or gpar
 #' but cannot be lists of gpars.
 #'
-#' @param default A fallback \code{\link[grid]{gpar}} for all unspecified attributes.
+#' @param default A fallback [grid::gpar] for all unspecified attributes.
 #'  If set to NULL then it defaults to legacy parameters, including
-#'  the \code{col}, \code{lwd.xaxis}, \code{lwd.ci} and \code{lty.ci}
-#'  parameter of \code{fpColors}.
-#' @param box The graphical parameters (\code{gpar}) of the box, circle
+#'  the `col`, `lwd.xaxis`, `lwd.ci` and `lty.ci`
+#'  parameter of `fpColors`.
+#' @param box The graphical parameters (`gpar`, `character`) of the box, circle
 #'  or point indicating the point estimate, i.e. the middle
-#'  of the confidence interval (may be a list of gpars)
-#' @param lines The graphical parameters (\code{gpar}) of the confidence lines
-#'  (may be a list of gpars)
-#' @param vertices The graphical parameters (\code{gpar}) of the vertices
+#'  of the confidence interval (may be a list of gpars). If provided
+#'  a string a `gpar` will be generated with `col`, and `fill` for
+#'  those arguments.
+#' @param lines The graphical parameters (`gpar`, `character`) of the confidence lines
+#'  (may be a list of gpars). If provided a string a `gpar` will be generated
+#'   with `col` as the only arguments.
+#' @param vertices The graphical parameters (`gpar`, `character`) of the vertices
 #'  (may be a list of gpars).
-#'  If \code{ci.vertices} is set to TRUE in \code{forestplot}
-#'  \code{vertices} inherits from \code{lines} all its parameters but lty that is set
+#'  If `ci.vertices` is set to TRUE in `forestplot`
+#'  `vertices` inherits from `lines` all its parameters but lty that is set
 #'  to "solid" by default.
-#' @param summary The graphical parameters (\code{gpar}) of the summary
-#'  (may be a list of gpars)
-#' @param zero The graphical parameters (\code{gpar}) of the zero line
-#'  (may not be a list of gpars)
-#' @param axes The graphical parameters (\code{gpar}) of the x-axis at the bottom
-#'  (may not be a list of gpars)
-#' @param hrz_lines The graphical parameters (\code{gpar}) of the horizontal lines
-#'  (may not be a list of gpars)
-#' @param grid The graphical parameters (\code{gpar}) of the grid (vertical lines)
-#'  (may be a list of gpars)
+#' @param summary The graphical parameters (`gpar`, `character`) of the summary
+#'  (may be a list of gpars). If provided a string a `gpar` will be generated with
+#'  `col`, and `fill` for those arguments.
+#' @param zero The graphical parameters (`gpar`) of the zero line
+#'  (may not be a list of gpars). If provided a string a `gpar` will be generated
+#'   with `col` as the only arguments.
+#' @param axes The graphical parameters (`gpar`) of the x-axis at the bottom
+#'  (may not be a list of gpars).
+#' @param hrz_lines The graphical parameters (`gpar`) of the horizontal lines
+#'  (may not be a list of gpars). If provided a string a `gpar` will be generated
+#'  with `col` as the only arguments.
+#' @param grid The graphical parameters (`gpar`) of the grid (vertical lines)
+#'  (may be a list of gpars). If provided a string a `gpar` will be generated
+#'   with `col` as the only arguments.
 #'
 #' @return list A list with the elements:
-#' \item{default}{the gpar for default attributes}
-#' \item{box}{the gpar or list of gpars of the box/marker}
-#' \item{lines}{the gpar or list of gpars of the lines}
-#' \item{vertices}{the gpar or list of gpars of the vertices}
-#' \item{summary}{the gpar or list of gpars of the summary}
-#' \item{zero}{the gpar of the zero vertical line}
-#' \item{axes}{the gpar of the x-axis}
-#' \item{hrz_lines}{the gpar of the horizontal lines}
-#' \item{grid}{the gpar or list of gpars of the grid lines}
+#' * default: the gpar for default attributes
+#' * box: the gpar or list of gpars of the box/marker
+#' * lines: the gpar or list of gpars of the lines
+#' * vertices: the gpar or list of gpars of the vertices
+#' * summary: the gpar or list of gpars of the summary
+#' * zero: the gpar of the zero vertical line
+#' * axes: the gpar of the x-axis
+#' * hrz_lines: the gpar of the horizontal lines
+#' * grid: the gpar or list of gpars of the grid lines
 #'
 #' @author Andre GILLIBERT
 #' @importFrom grid gpar
@@ -638,47 +702,64 @@ fpColors <- function(all.elements,
 #' @example inst/examples/fpShapesGp_example.R
 #' @export
 #' @family forestplot functions
-fpShapesGp <- function(default    = NULL,
-                       box        = NULL,
-                       lines      = NULL,
-                       vertices   = NULL,
-                       summary    = NULL,
-                       zero       = NULL,
-                       axes       = NULL,
-                       hrz_lines  = NULL,
-                       grid       = NULL)
-{
- ret <- list(
-   default = default,
-   box = box,
-   lines = lines,
-   vertices = vertices,
-   summary = summary,
-   zero = zero,
-   axes = axes,
-   hrz_lines = hrz_lines,
-   grid = grid
- )
+fpShapesGp <- function(default = NULL,
+                       box = NULL,
+                       lines = NULL,
+                       vertices = NULL,
+                       summary = NULL,
+                       zero = NULL,
+                       axes = NULL,
+                       hrz_lines = NULL,
+                       grid = NULL) {
+  ret <- list(
+    default = default,
+    box = box,
+    lines = lines,
+    vertices = vertices,
+    summary = summary,
+    zero = zero,
+    axes = axes,
+    hrz_lines = hrz_lines,
+    grid = grid
+  )
 
- # check that objects have the correct type
- for (nm in names(ret)) {
-   obj = ret[[nm]]
-   if (!is.null(obj) & !inherits(obj, "gpar")) {
-     if (nm %in% c("default", "zero", "axes", "hrz_lines")) {
-       stop("`", nm, "` must either be NULL or a gpar")
-     }
+  for (clr_grp in c("box", "summary", "lines", "zero", "hrz_lines", "grid", "vertices")) {
+    gpar_generator <- \(clr) gpar(col = clr)
+    if (clr_grp %in% c("box", "summary")) {
+      gpar_generator <- \(clr) gpar(col = clr, fill = clr)
+    }
 
-     if (!is.list(obj)) {
-       stop("`", nm, "` must either be NULL, a gpar or a list of gpars")
-     }
+    if (is.character(ret[[clr_grp]])) {
+      ret[[clr_grp]] <- sapply(ret[[clr_grp]],
+                               FUN = gpar_generator,
+                               USE.NAMES = TRUE,
+                               simplify = FALSE)
 
-     if (!all(sapply(obj, function(o) inherits(o, "gpar")))) {
-       stop("`", nm, "` is not a proper list of gpars")
-     }
-   }
- }
+      if (length(ret[[clr_grp]]) == 1) {
+        ret[[clr_grp]] <- ret[[clr_grp]][[1]]
+      }
+    }
+  }
 
- return(structure(ret, class = c("fpShapesGp", class(ret))))
+  # check that objects have the correct type
+  for (nm in names(ret)) {
+    obj <- ret[[nm]]
+    if (!is.null(obj) & !inherits(obj, "gpar")) {
+      if (nm %in% c("default", "zero", "axes", "hrz_lines")) {
+        stop("`", nm, "` must either be NULL or a gpar")
+      }
+
+      if (!is.list(obj)) {
+        stop("`", nm, "` must either be NULL, a gpar or a list of gpars")
+      }
+
+      if (!all(sapply(obj, function(o) inherits(o, "gpar")))) {
+        stop("`", nm, "` is not a proper list of gpars")
+      }
+    }
+  }
+
+  return(structure(ret, class = c("fpShapesGp", class(ret))))
 }
 
 #' A function to extract graphical parameters from a fpShapesGp object
@@ -730,11 +811,11 @@ prGetShapeGp <- function(shapes_gp, coords, object, default = grid::gpar(), node
       stop("`max.coords` attribute must be a numeric vector of length 2")
     }
     if (!all(coords <= max.coords & coords >= 1)) {
-      stop(paste0("`coords` (",paste(coords, collapse = ", "), ")  out of range of `max.coords` (",paste(max.coords, collapse = ", "), ")"))
+      stop(paste0("`coords` (", paste(coords, collapse = ", "), ")  out of range of `max.coords` (", paste(max.coords, collapse = ", "), ")"))
     }
   } else {
-    max.coords = c(1,1)
-    coords = c(1,1)
+    max.coords <- c(1, 1)
+    coords <- c(1, 1)
   }
 
   if (nodefault) {
@@ -743,29 +824,31 @@ prGetShapeGp <- function(shapes_gp, coords, object, default = grid::gpar(), node
     gp <- prMergeGp(default, shapes_gp[["default"]])
   }
   if (!is.null(shapes_gp[[object]])) {
-  	# override.
-  	shps <- shapes_gp[[object]]
-  	if (inherits(shps, "gpar")) {
-  	  gp <- prMergeGp(gp, shps)
-  	} else if (!is.list(shps)) {
-  	  stop(paste0("`shapes_gp$", object, "` must be a gpar or a list of gpars"))
-  	} else if (length(shps) == max.coords[2]) { # list of gpars...
-  	  shp <- shps[[coords[2]]]
-  	  gp <- prMergeGp(gp, shp)
-  	} else if (length(shps) == max.coords[1] * max.coords[2]) {
-  	  shp <- shps[[(coords[1] - 1) * max.coords[2] + coords[2] ]]
-  	  gp <- prMergeGp(gp, shp)
-  	} else {
-  	  if (undefined_coords) {
-  	    stop(paste0("shape_gp$", object, " should be a gpar"))
-  	  } else if (object == "grid") {
-  	    stop(paste0("length of shape_gp$grid (", length(shps), ") must either be equal to 1 or to the number of grid elements specified in `xticks` or `grid` parameter of forestplot"))
-  	  } else {
-  	    stop(paste0("length of shapes_gp$", object, " (", length(shps), ") should either be equal to number",
-  	       " of bands per label (", max.coords[2], "),\nor to the product of the number of labels and",
-  	       " number of bands per label (", max.coords[1], "*", max.coords[2], " = ", max.coords[1]*max.coords[2], ")"))
-  	  }
-  	}
+    # override.
+    shps <- shapes_gp[[object]]
+    if (inherits(shps, "gpar")) {
+      gp <- prMergeGp(gp, shps)
+    } else if (!is.list(shps)) {
+      stop(paste0("`shapes_gp$", object, "` must be a gpar or a list of gpars"))
+    } else if (length(shps) == max.coords[2]) { # list of gpars...
+      shp <- shps[[coords[2]]]
+      gp <- prMergeGp(gp, shp)
+    } else if (length(shps) == max.coords[1] * max.coords[2]) {
+      shp <- shps[[(coords[1] - 1) * max.coords[2] + coords[2]]]
+      gp <- prMergeGp(gp, shp)
+    } else {
+      if (undefined_coords) {
+        stop(paste0("shape_gp$", object, " should be a gpar"))
+      } else if (object == "grid") {
+        stop(paste0("length of shape_gp$grid (", length(shps), ") must either be equal to 1 or to the number of grid elements specified in `xticks` or `grid` parameter of forestplot"))
+      } else {
+        stop(paste0(
+          "length of shapes_gp$", object, " (", length(shps), ") should either be equal to number",
+          " of bands per label (", max.coords[2], "),\nor to the product of the number of labels and",
+          " number of bands per label (", max.coords[1], "*", max.coords[2], " = ", max.coords[1] * max.coords[2], ")"
+        ))
+      }
+    }
   }
   return(gp)
 }
@@ -778,7 +861,7 @@ prGetShapeGp <- function(shapes_gp, coords, object, default = grid::gpar(), node
 #' @return A \code{\link[grid]{gpar}} merging attributes of both \code{weak} and \code{strong}
 #
 prMergeGp <- function(weak = gpar(), strong = gpar()) {
-  ret = weak
+  ret <- weak
   for (nm in names(strong)) {
     ret[[nm]] <- strong[[nm]]
   }
@@ -816,16 +899,18 @@ prMergeGp <- function(weak = gpar(), strong = gpar()) {
 #' @return \code{list} Returns a list with all the elements
 #' @export
 #' @family forestplot functions
-fpLegend <- function(pos           = "top",
-                     gp            = NULL,
-                     r             = unit(0, "snpc"),
-                     padding       = unit(ifelse(!is.null(gp), 3, 0), "mm"),
-                     title         = NULL)  {
-  return(list(pos = pos,
-              gp = gp,
-              r = r,
-              padding = padding,
-              title = title))
+fpLegend <- function(pos = "top",
+                     gp = NULL,
+                     r = unit(0, "snpc"),
+                     padding = unit(ifelse(!is.null(gp), 3, 0), "mm"),
+                     title = NULL) {
+  return(list(
+    pos = pos,
+    gp = gp,
+    r = r,
+    padding = padding,
+    title = title
+  ))
 }
 
 #' Get font settings for forestplot
@@ -865,40 +950,45 @@ fpTxtGp <- function(label,
                     ticks,
                     legend,
                     legend.title,
-                    cex = 1)  {
-
-  prGparMergeMultiLevel <- function(ret, element)  {
+                    cex = 1) {
+  prGparMergeMultiLevel <- function(ret, element) {
     name <- deparse(substitute(element))
-    if (!inherits(element, "gpar"))  {
+    if (!inherits(element, "gpar")) {
       if (inherits(element, "list") &&
-            (inherits(element[[1]], "gpar") ||
-               (inherits(element[[1]], "list") &&
-                  inherits(element[[1]][[1]], "gpar"))))  {
-        if (inherits(element[[1]], "gpar"))  {
+        (inherits(element[[1]], "gpar") ||
+          (inherits(element[[1]], "list") &&
+            inherits(element[[1]][[1]], "gpar")))) {
+        if (inherits(element[[1]], "gpar")) {
           ret <- lapply(element, function(x, l1) prGparMerge(l1, x), l1 = ret)
           attr(ret, "txt_dim") <- 1
-          default_element  <- ret[[1]]
-        }else{
+          default_element <- ret[[1]]
+        } else {
           el_len <- sapply(element, length, USE.NAMES = FALSE)
-          if (any(el_len != el_len[1]))
-            stop("It seems that you haven't provided a square list",
-                 " for '", name ,"'",
-                 ", ie all rows have the same number of elements.",
-                 " Currently the list lengths are:",
-                 " '", paste(el_len, collapse = "', '"), "'")
+          if (any(el_len != el_len[1])) {
+            stop(
+              "It seems that you haven't provided a square list",
+              " for '", name, "'",
+              ", ie all rows have the same number of elements.",
+              " Currently the list lengths are:",
+              " '", paste(el_len, collapse = "', '"), "'"
+            )
+          }
           ret <- lapply(element, function(l) {
-            lapply(l, function(x, l1)
-              prGparMerge(l1, x), l1 = ret)
+            lapply(l, function(x, l1) {
+              prGparMerge(l1, x)
+            }, l1 = ret)
           })
           attr(ret, "txt_dim") <- 2
-          default_element  <- ret[[1]][[1]]
+          default_element <- ret[[1]][[1]]
         }
-      }else{
+      } else {
         stop("You can only provide arguments from gpar() or a 1-2 dimensional list of gpars to the function")
       }
-    }else{
-      ret <- prGparMerge(ret,
-                    element)
+    } else {
+      ret <- prGparMerge(
+        ret,
+        element
+      )
       attr(ret, "txt_dim") <- 0
       default_element <- ret
     }
@@ -907,90 +997,129 @@ fpTxtGp <- function(label,
   }
 
   ret <- list()
-  ret$label <- list(fontface = "plain",
-                    cex = cex)
+  ret$label <- list(
+    fontface = "plain",
+    cex = cex
+  )
   attr(ret$label, "ref") <- ret$label
   attr(ret$label, "txt_dim") <- 0
 
-  if (!missing(label))  {
-    ret$label <- prGparMergeMultiLevel(ret$label,
-                                  label)
+  if (!missing(label)) {
+    ret$label <- prGparMergeMultiLevel(
+      ret$label,
+      label
+    )
   }
 
   ret$summary <-
-    prGparMerge(attr(ret$label, "ref"),
-           list(fontface = "bold",
-                cex = attr(ret$label, "ref")$cex*1.1))
+    prGparMerge(
+      attr(ret$label, "ref"),
+      list(
+        fontface = "bold",
+        cex = attr(ret$label, "ref")$cex * 1.1
+      )
+    )
   attr(ret$summary, "ref") <- ret$summary
   attr(ret$summary, "txt_dim") <- 0
 
-  if (!missing(summary))  {
-    ret$summary <- prGparMergeMultiLevel(ret$summary,
-                                    summary)
+  if (!missing(summary)) {
+    ret$summary <- prGparMergeMultiLevel(
+      ret$summary,
+      summary
+    )
   }
 
   ret$title <-
-    prGparMerge(attr(ret$label, "ref"),
-           list(fontface = "bold",
-                cex = attr(ret$label, "ref")$cex*1.2,
-                just = "center"))
+    prGparMerge(
+      attr(ret$label, "ref"),
+      list(
+        fontface = "bold",
+        cex = attr(ret$label, "ref")$cex * 1.2,
+        just = "center"
+      )
+    )
 
-  if (!missing(title))  {
-    if (class(title) != "gpar")
+  if (!missing(title)) {
+    if (!inherits(title, "gpar")) {
       stop("You can only provide arguments from gpar() to the function")
-    ret$title <- prGparMerge(ret$title,
-                        title)
+    }
+    ret$title <- prGparMerge(
+      ret$title,
+      title
+    )
   }
 
   ret$xlab <-
-    prGparMerge(attr(ret$label, "ref"),
-           list(cex = attr(ret$label, "ref")$cex*0.6))
+    prGparMerge(
+      attr(ret$label, "ref"),
+      list(cex = attr(ret$label, "ref")$cex * 0.6)
+    )
 
-  if (!missing(xlab))  {
-    if (class(xlab) != "gpar")
+  if (!missing(xlab)) {
+    if (!inherits(xlab, "gpar")) {
       stop("You can only provide arguments from gpar() to the function")
-    ret$xlab <- prGparMerge(ret$xlab,
-                       xlab)
+    }
+    ret$xlab <- prGparMerge(
+      ret$xlab,
+      xlab
+    )
   }
 
   ret$ticks <-
-    prGparMerge(attr(ret$label, "ref"),
-           list(cex = attr(ret$label, "ref")$cex*0.5))
+    prGparMerge(
+      attr(ret$label, "ref"),
+      list(cex = attr(ret$label, "ref")$cex * 0.5)
+    )
 
-  if (!missing(ticks))  {
-    if (class(ticks) != "gpar")
+  if (!missing(ticks)) {
+    if (!inherits(ticks, "gpar")) {
       stop("You can only provide arguments from gpar() to the function")
-    ret$ticks <- prGparMerge(ret$ticks,
-                        ticks)
+    }
+    ret$ticks <- prGparMerge(
+      ret$ticks,
+      ticks
+    )
   }
 
   ret$legend <-
-    prGparMerge(attr(ret$label, "ref"),
-           list(cex = attr(ret$label, "ref")$cex*0.8))
+    prGparMerge(
+      attr(ret$label, "ref"),
+      list(cex = attr(ret$label, "ref")$cex * 0.8)
+    )
   attr(ret$legend, "ref") <- ret$legend
   attr(ret$legend, "txt_dim") <- 0
 
-  if (!missing(legend))  {
-    if (class(legend) != "gpar")
+  if (!missing(legend)) {
+    if (!inherits(legend, "gpar")) {
       stop("You can only provide arguments from gpar() to the function")
+    }
 
-    ret$legend <- prGparMergeMultiLevel(ret$legend,
-                                   legend)
+    ret$legend <- prGparMergeMultiLevel(
+      ret$legend,
+      legend
+    )
   }
 
   ret$legend.title <-
-    prGparMerge(attr(ret$label, "ref"),
-           list(fontface = "bold",
-                cex = attr(ret$label, "ref")$cex * 1.1))
+    prGparMerge(
+      attr(ret$label, "ref"),
+      list(
+        fontface = "bold",
+        cex = attr(ret$label, "ref")$cex * 1.1
+      )
+    )
 
-  if (!missing(legend.title))  {
-    if (class(legend.title) != "gpar")
+  if (!missing(legend.title)) {
+    if (!inherits(legend.title, "gpar")) {
       stop("You can only provide arguments from gpar() to the function")
-    ret$legend.title <- prGparMerge(ret$legend.title,
-                               legend.title)
+    }
+    ret$legend.title <- prGparMerge(
+      ret$legend.title,
+      legend.title
+    )
   }
 
   return(structure(ret,
-                   class = c("fpTxtGp", class(ret))))
+    class = c("fpTxtGp", class(ret))
+  ))
 }
-
