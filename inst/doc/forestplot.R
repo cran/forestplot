@@ -115,7 +115,6 @@ base_data |>
 base_data |> 
   forestplot(labeltext = c(study, deaths_steroid, deaths_placebo, OR), 
              clip = c(0.1, 2.5), 
-             graph.pos = 4,
              vertices = TRUE,
              xlog = TRUE) |> 
   fp_add_lines(h_3 = gpar(lty = 2), 
@@ -134,7 +133,9 @@ base_data |>
                 study = "Summary",
                 OR = "0.53",
                 is.summary = TRUE) |> 
-  fp_decorate_graph(box = gpar(lty = 2, col = "lightgray"))
+  fp_decorate_graph(box = gpar(lty = 2, col = "lightgray"),
+                    graph.pos = 4) |> 
+  fp_set_zebra_style("#f9f9f9")
 
 ## -----------------------------------------------------------------------------
 data(dfHRQoL)
@@ -276,7 +277,8 @@ dfHRQoL |>
              clip = c(-.125, 0.075),
              xlab = "EQ-5D index") |> 
   fp_set_style(box = c("blue", "darkred") |> lapply(function(x) gpar(fill = x, col = "#555555")),
-               default = gpar(vertices = TRUE))
+               default = gpar(vertices = TRUE)) |> 
+  fp_set_zebra_style("#F5F9F9")
 
 ## -----------------------------------------------------------------------------
 dfHRQoL |>
@@ -347,11 +349,12 @@ dfHRQoL |>
              boxsize = .25, # We set the box size to better visualize the type
              line.margin = .1, # We need to add this to avoid crowding
              clip = c(-.125, 0.075),
-             grid = TRUE,
              xticks = c(-.1, -0.05, 0, .05),
              zero = 0,
              xlab = "EQ-5D index") |> 
-  fp_set_style(box = c("blue", "darkred") |> lapply(function(x) gpar(fill = x, col = "#555555")))
+  fp_set_style(box = c("blue", "darkred") |> lapply(function(x) gpar(fill = x, col = "#555555"))) |> 
+  fp_decorate_graph(grid = structure(c(-.1, -.05, .05), 
+                              gp = gpar(lty = 2, col = "#CCCCFF")))
 
 ## -----------------------------------------------------------------------------
 dfHRQoL |>
@@ -360,10 +363,10 @@ dfHRQoL |>
              boxsize = .25, # We set the box size to better visualize the type
              line.margin = .1, # We need to add this to avoid crowding
              clip = c(-.125, 0.075),
-             grid = structure(c(-.1, -.05, .05), 
-                              gp = gpar(lty = 2, col = "#CCCCFF")), 
              xlab = "EQ-5D index") |> 
-  fp_set_style(box = c("blue", "darkred") |> lapply(function(x) gpar(fill = x, col = "#555555")))
+  fp_set_style(box = c("blue", "darkred") |> lapply(function(x) gpar(fill = x, col = "#555555"))) |> 
+  fp_decorate_graph(grid = structure(c(-.1, -.05, .05), 
+                                     gp = gpar(lty = 2, col = "#CCCCFF")))
 
 ## ---- eval=FALSE, echo=TRUE---------------------------------------------------
 #  grid_arg <- c(-.1, -.05, .05)
