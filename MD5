@@ -1,6 +1,6 @@
-63399c28f5dda159c5a0144080945b17 *DESCRIPTION
+f925f22df788c99785930f82f5caecae *DESCRIPTION
 b491cc03fe984656e19dfc1081a6d450 *NAMESPACE
-efd26da4fb34c26930682cb8594f275b *NEWS.md
+d465d91254cd76001e7386c574b6f218 *NEWS.md
 c8fe96ce9217359cd53b82d632f1d903 *R/assertAndRetrieveTidyValue.R
 3085073d709b1d5f508f2667063af7a7 *R/data-HRQoL.R
 bde3cd755f376481005f81648ab450de *R/drawForestplotObject.R
@@ -8,7 +8,7 @@ bde3cd755f376481005f81648ab450de *R/drawForestplotObject.R
 fc67d472dd93bf9c62f98cbea7fcfbdb *R/forestplot.R
 f3c910cafea3b2bef1f1359abeac3cb6 *R/forestplot.data.frame.R
 042beb10843e05cc901f34fd2f40c115 *R/forestplot.default.R
-3035cb76a4ef81a87336f5287afaf54e *R/forestplot.grouped_df.R
+9ab21aa47d37435565a3a45b407c8974 *R/forestplot.grouped_df.R
 2c2fa857f2879d042108dc9ecdb6fbd3 *R/forestplot_helpers.R
 ab4548ad212229552b5e792658af9dfb *R/fp_add_lines.R
 ba76c81f16746c62b05c2a26c1c20678 *R/fp_decorate_graph.R
@@ -37,12 +37,12 @@ c5e895ec38563163ebfe7e48df3b0162 *R/private_prepLines.R
 3b9841550e0ac4918705359bb90df485 *R/safeLoadPackage.R
 a7eb92eeeb1885e963db41692a5ee1ab *R/text_styling.R
 e3389eb32ac60688bf71579b104e741d *README.md
-98a815d40affbddc2d3bd2f25e82ce31 *build/vignette.rds
+43eafd601017213750fd5df17da5fc3c *build/vignette.rds
 d605e7b47680b7bf3a127a2fd1c477c6 *data/HRQoL.rda
 a31ae3b89a17a4faf3922a12cbe24c75 *data/dfHRQoL.rda
 98dd3b63d76edf156c8eb00d569d892d *inst/doc/forestplot.R
 6ac44b97b4fb32201b61fae4863b7dde *inst/doc/forestplot.Rmd
-4dd2489733ed32015b224c9c8f2c223d *inst/doc/forestplot.html
+05b079d5a478c6c64d99394bb3e18355 *inst/doc/forestplot.html
 e7ae94e4245579a11ac6e2a7e1ce6a71 *inst/examples/forestplot_alt_ci_example.R
 17c023ce47c7c5af4615c661ec1f9281 *inst/examples/forestplot_example.R
 8ecd5171fdb6f60f934d101518e2e850 *inst/examples/fpColors_example.R
@@ -104,6 +104,7 @@ b8d6aab3d6125ce21b36b4f4cd4cc022 *tests/forestplot2_vtests.R
 90cbe854b8cba0c8efb1c90867e5be12 *tests/test_visual_w_cochrane_mdata.R
 704cb006dae5894a4b5a82cc6a876133 *tests/test_visual_with_Greg.R
 390997f898c27826a7bc569214d6f029 *tests/testthat.R
+45014102341d4356a73559ed4c3fc5e6 *tests/testthat/Rplots.pdf
 9c6f227cb1bdfd63a5dc18e0617d957f *tests/testthat/test-forestplot.group_df.R
 12506cec347e46c61a8faa69d903972b *tests/testthat/test-forestplot_1_compatibility.R
 ec9f7930093729a8549c6714245fa79e *tests/testthat/test-fpShapesGp.R
